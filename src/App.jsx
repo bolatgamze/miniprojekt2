@@ -21,12 +21,14 @@ import NeuerText from "./components/NeuerText.jsx";
 
 function App() {
 
-    const [benutzern, setBenutzern] = useState(benutzerDaten);
+    const [benutzern, setBenutzern] = useState(() => {
+        const savedUsers = localStorage.getItem('users');
+        return savedUsers ? JSON.parse(savedUsers) : benutzerDaten;})
     const [texts, setTexts] = useState(() => {
         const saved = localStorage.getItem('texts');
         return saved ? JSON.parse(saved) : textData;
     })
-    const [currentUser, setCurrenUser] = useState(
+    const [currentUser, setCurrentUser] = useState(
     {
         benutzername: "Gandalf",
             status: "admin",
@@ -49,6 +51,10 @@ function App() {
         localStorage.setItem('texts', JSON.stringify(texts));
     }, [texts]);
 
+        useEffect(() => {
+            localStorage.setItem('users', JSON.stringify(benutzern));
+        }, [benutzern]);
+
     const handleSaveNewText = (text) => {
         setTexts([...texts, text]);
     };
@@ -60,7 +66,7 @@ function App() {
                 <Route path="/home" element={<Home texts={texts} setTexts={setTexts} benutzer={benutzern} setBenutzern={setBenutzern} currentUser={currentUser}/>} />
                 <Route path="/text/:id" element={<TextDetail texts={texts} setTexts={setTexts} benutzern={benutzern} />} />
                 <Route path="/" element={<About />} />
-                <Route path="/login" element={<Login benutzern={benutzern} />} />
+                <Route path="/login" element={<Login benutzern={benutzern} setCurrentUser={setCurrentUser} currentUser={currentUser} />} />
                 <Route path="/register" element={<Register benutzern={benutzern} setBenutzern={setBenutzern} />} />
                 <Route path="/admin" element={<AdminPanel benutzern={benutzern} setBenutzern={setBenutzern} />} />
                 <Route path="/meinprofil" element={<MeinProfil benutzern={benutzern} currentUser={currentUser} />} />
