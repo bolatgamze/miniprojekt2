@@ -38,7 +38,7 @@ function TextDetail({ texts, setTexts, benutzern }) {
             if (t.id === text.id) {
                 return {
                     ...t,
-                    kommentare: t.kommentare.filter(k => k.id !== komentarId)
+                    kommentare: t.kommentare.filter(k => k.id !== kommentarId)
                 };
             }
             return t;
