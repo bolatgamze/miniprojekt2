@@ -1,33 +1,101 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-/*
-bei navbar als gast kann man nur home about und login sehen
-adminpanel, entwürfe und neuer text sind nur für admin
-und merkliste ist nur für user
-
-wo 'mein profil' steht, hätte ich gerne profil bild vom user
+/**
+ * NavBar-Komponente mit rollenbasiertem Zugriff und festgelegter Breite.
+ * props:
+ * - user: { benutzername, status, profilbild }
+ *   status: 'guest' | 'user' | 'admin'
  */
+function NavBar({ user }) {
+    const role = user?.status || 'guest';
+    const avatarUrl = user?.profilbild || '';
 
-function NavBar() {
     return (
-        <nav className="navbar">
-            <div className="navLinks">
-                <Link to="/home" className="navLink">Home</Link>
-                <Link to="/admin" className="navLink">Admin Panel</Link>
-                <Link to="/neuerText" className="navLink">Neuer Text</Link>
-                <Link to="/entwuerfe" className="navLink">Entwürfe</Link>
-                <Link to="/merkliste" className="navLink">Merkliste</Link>
-                <Link to="/" className="navLink">About</Link>
-            </div>
+        <nav style={styles.navbar}>
+            <div style={styles.container}>
+                {/* Link-Bereich */}
+                <div style={styles.links}>
+                    <Link to="/home" className="navLink">Home</Link>
+                    <Link to="/" className="navLink">Über Uns</Link>
 
-            <div>
-                <Link to="/profil" className="navLink">Mein Profil</Link>
+                    {role === 'admin' && (
+                        <>
+                            <Link to="/admin" className="navLink">Admin Panel</Link>
+                            <Link to="/neuerText" className="navLink">Neuer Text</Link>
+                            <Link to="/entwuerfe" className="navLink">Entwürfe</Link>
+                        </>
+                    )}
 
-                <Link to="/login" className="navLink">Login</Link>
+                    {role === 'user' || role === 'admin' && (
+                        <Link to="/merkliste" className="navLink">Merkliste</Link>
+                    )}
+                </div>
+
+                {/* Profil-/Logout-Bereich */}
+                <div style={styles.profileSection}>
+                    {role !== 'guest' ? (
+                        <>
+                            <Link to="/meinprofil" style={styles.profileLink}>
+                                <img src={avatarUrl} alt="Profilbild" style={styles.avatar} />
+                            </Link>
+                            <Link to="/logout" className="navLink" style={styles.logoutLink}>Logout</Link>
+                        </>
+                    ) : (
+                        <Link to="/login" className="navLink">Login</Link>
+                    )}
+                </div>
             </div>
         </nav>
     );
 }
+
+const styles = {
+    navbar: {
+        width: '100%',
+        background: 'linear-gradient(90deg, #ff8360 0%, #ffefd5 100%)',
+        borderBottom: '1px solid rgba(0,0,0,0.1)',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    },
+    container: {
+        maxWidth: '1200px',
+        minWidth: '1200px',
+        margin: '0 auto',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: '60px',
+        padding: '0 16px',
+    },
+    links: {
+        display: 'flex',
+        gap: '16px',
+        whiteSpace: 'nowrap',
+    },
+    profileSection: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px'
+    },
+    profileLink: {
+        display: 'block',
+        width: '36px',
+        height: '36px',
+        borderRadius: '50%',
+        overflow: 'hidden',
+    },
+    avatar: {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        borderRadius: '50%',
+    },
+    logoutLink: {
+        textDecoration: 'none',
+        color: '#333',
+        fontWeight: '500',
+        transition: 'color 0.2s',
+    }
+};
 
 export default NavBar;

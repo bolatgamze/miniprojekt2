@@ -16,6 +16,8 @@ import textData from "./texts.js"
 import './App.css'
 import {useEffect, useState} from "react";
 import NeuerText from "./components/NeuerText.jsx";
+import Header from "./components/Header.jsx";
+import Footer from "./components/Footer.jsx";
 
 
 
@@ -55,7 +57,8 @@ function App() {
 
     return (
         <>
-            <NavBar />
+            <Header />
+            <NavBar user={currentUser}/>
             <Routes>
                 <Route path="/home" element={<Home texts={texts} setTexts={setTexts} benutzer={benutzern} setBenutzern={setBenutzern} currentUser={currentUser}/>} />
                 <Route path="/text/:id" element={<TextDetail texts={texts} setTexts={setTexts} benutzern={benutzern} />} />
@@ -68,6 +71,7 @@ function App() {
                 <Route path="/entwuerfe" element={<Entwuerfe texts={texts} setTexts={setTexts} currentUser={currentUser} />} />
                 <Route path="/merkliste" element={<MerkListe benutzern={benutzern} currentUser={currentUser} />} />
             </Routes>
+            <Footer />
         </>
     );
 }
