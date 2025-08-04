@@ -28,7 +28,7 @@ __________________________________________
     !!!!löschen fonktion fehlt!!!!
 */
 
-function AdminPanel({ benutzern }) {
+function AdminPanel({ benutzern, setBenutzern }) {
     const admins = benutzern.filter(user => user.status === 'admin');
     const users = benutzern
         .filter(user => user.status === 'user')
@@ -40,6 +40,12 @@ function AdminPanel({ benutzern }) {
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
     const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
     const totalPages = Math.ceil(users.length / usersPerPage);
+
+    const handleDeleteUser = (username) => {
+        if (window.confirm(`Willst du den Benutzer "${username}" wirklich löschen?`)) {
+            setBenutzern(benutzern.filter(u => u.benutzername !== username))
+        }
+    };
 
     const containerStyle = {
         padding: '2rem',
@@ -188,7 +194,11 @@ function AdminPanel({ benutzern }) {
                             <p>Email: {user.email}</p>
                             <p>Zuletzt online: {new Date(user.zuletztOnline).toLocaleDateString('de-DE')}</p>
                         </div>
-                        <button style={deleteBtnStyle}>Löschen</button>
+                        <button
+                            style={deleteBtnStyle}
+                            onClick={() => handleDeleteUser(user.benutzername)}
+                        >Löschen
+                        </button>
                     </div>
                 ))}
             </div>

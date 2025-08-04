@@ -1,46 +1,49 @@
-import {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 /*
-hier liste ich die texte nach datum oder autor
-aber ich habe den Texts einfach random daumenhoch und runter zahlen gegeben ich will auch danach listen können
-also 2-3 funktionen fehlen hier noch
-z.B. um merkliste hinzufügen muss ich stern funktion schreiben
- */
+  Home-Komponente: Liste mit Filtern, Sortieroptionen und Karten.
+  Auf jeder Karte: Oben eine weiße Leiste mit Datum links und einem Stern rechts.
+  Der Stern startet leer, lässt sich anklicken, wird dann gelb gefüllt und etwas größer.
+  Funktionalität bleibt lokal (keine Merkliste in benutzern). Bildklick navigiert zur Detailseite.
+*/
 
-function Home({texts, setTexts}) {
+function Home({ texts, setTexts, setBenutzern, benutzern }) {
     const [ausgewählteKategorie, setAusgewählteKategorie] = useState("Alle");
     const [ausgewählterAutor, setAusgewählterAutor] = useState("Alle");
     const [suchbegriff, setSuchbegriff] = useState("");
-    const [nurTopBewertet, setNurTopBewertet] = useState(false);
     const [sortOption, setSortOption] = useState("DatumNeu");
     const [seite, setSeite] = useState(1);
+    // Lokaler State für Stern-Status pro Text-ID
+    const [starred, setStarred] = useState({});
 
     const navigate = useNavigate();
 
     const kategorien = ["Alle", "Fotografie", "Reflexion", "Gesundheit", "Abenteuer"];
     const autoren = ["Alle", "Loki", "Gandalf", "Simba", "Rufus"];
 
-    let gefilterteTexte = texts.filter((t) => {
-        const kategorieMatch = ausgewählteKategorie === "Alle" || t.kategorie === ausgewählteKategorie;
-        const autorMatch = ausgewählterAutor === "Alle" || t.autor === ausgewählterAutor;
+    const toggleStar = (id) => {
+        setStarred(prev => ({ ...prev, [id]: !prev[id] }));
+    };
+
+    // Filter
+    let gefilterteTexte = texts.filter(t => {
+        const katMatch = ausgewählteKategorie === "Alle" || t.kategorie === ausgewählteKategorie;
+        const authMatch = ausgewählterAutor === "Alle" || t.autor === ausgewählterAutor;
         const titelMatch = t.ueberschrift.toLowerCase().includes(suchbegriff.toLowerCase());
-        const bewertungMatch = !nurTopBewertet || (parseInt(t.bewertung) >= 3);
-        return kategorieMatch && titelMatch && bewertungMatch && autorMatch;
+        return katMatch && authMatch && titelMatch;
     });
 
-    gefilterteTexte = gefilterteTexte.sort((a, b) => {
+    // Sortierung
+    gefilterteTexte.sort((a, b) => {
         switch (sortOption) {
-            case "DatumNeu":
-                return new Date(b.datum) - new Date(a.datum);
-            case "DatumAlt":
-                return new Date(a.datum) - new Date(b.datum);
-            case "AutorAZ":
-                return a.autor.localeCompare(b.autor);
-            case "AutorZA":
-                return b.autor.localeCompare(a.autor);
-            default:
-                return 0;
+            case "DatumNeu": return new Date(b.datum) - new Date(a.datum);
+            case "DatumAlt": return new Date(a.datum) - new Date(b.datum);
+            case "AutorAZ": return a.autor.localeCompare(b.autor);
+            case "AutorZA": return b.autor.localeCompare(a.autor);
+            case "AmBeliebtesten": return b.daumenHoch - a.daumenHoch;
+            case "AmMeistenBewertet": return (b.daumenHoch + b.daumenRunter) - (a.daumenHoch + a.daumenRunter);
+            default: return 0;
         }
     });
 
@@ -49,128 +52,72 @@ function Home({texts, setTexts}) {
     const startIndex = (seite - 1) * itemsPerPage;
     const aktuelleTexte = gefilterteTexte.slice(startIndex, startIndex + itemsPerPage);
 
-    const handleRatingClick = (id, neueBewertung) => {
-        setTexts((prevTexts) =>
-            prevTexts.map((t) =>
-                t.id === id ? {...t, bewertung: neueBewertung.toString()} : t
-            )
-        );
-    };
-
     return (
-        <div style={{padding: "20px", color: "#1a1a1a"}}>
-            <div
-                style={{
-                    display: "flex",
-                    gap: "16px",
-                    alignItems: "center",
-                    marginBottom: "20px",
-                    flexWrap: "wrap",
-                    justifyContent: "center",
-                }}
-            >
+        <div style={{ padding: "20px", color: "#1a1a1a" }}>
+            {/* Filterleiste */}
+            <div style={filterBarStyle}>
                 <input
                     type="text"
                     placeholder="Text suchen..."
                     value={suchbegriff}
-                    onChange={(e) => setSuchbegriff(e.target.value)}
-                    style={{
-                        padding: "10px",
-                        borderRadius: "8px",
-                        border: "1px solid #ccc",
-                        backgroundColor: "#fff",
-                        color: "#333",
-                        minWidth: "200px",
-                        fontSize: "1rem",
-                    }}
+                    onChange={e => setSuchbegriff(e.target.value)}
+                    style={inputStyle}
                 />
-
-                <select value={ausgewählteKategorie} onChange={(e) => setAusgewählteKategorie(e.target.value)}
-                        style={selectStyle}>
-                    {kategorien.map((k) => <option key={k} value={k}>{k}</option>)}
+                <select value={ausgewählteKategorie} onChange={e => setAusgewählteKategorie(e.target.value)} style={selectStyle}>
+                    {kategorien.map(k => <option key={k} value={k}>{k}</option>)}
                 </select>
-
-                <select value={ausgewählterAutor} onChange={(e) => setAusgewählterAutor(e.target.value)}
-                        style={selectStyle}>
-                    {autoren.map((a) => <option key={a} value={a}>{a}</option>)}
+                <select value={ausgewählterAutor} onChange={e => setAusgewählterAutor(e.target.value)} style={selectStyle}>
+                    {autoren.map(a => <option key={a} value={a}>{a}</option>)}
                 </select>
-
-                <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} style={selectStyle}>
+                <select value={sortOption} onChange={e => setSortOption(e.target.value)} style={selectStyle}>
                     <option value="DatumNeu">Neueste zuerst</option>
                     <option value="DatumAlt">Älteste zuerst</option>
-                    <option value="AutorAZ">Autor A-Z</option>
-                    <option value="AutorZA">Autor Z-A</option>
+                    <option value="AutorAZ">Autor A–Z</option>
+                    <option value="AutorZA">Autor Z–A</option>
+                    <option value="AmBeliebtesten">Am beliebtesten</option>
+                    <option value="AmMeistenBewertet">Am meisten bewertet</option>
                 </select>
-
-                <label style={checkboxLabelStyle}>
-                    <input
-                        type="checkbox"
-                        checked={nurTopBewertet}
-                        onChange={() => setNurTopBewertet((prev) => !prev)}
-                    />
-                    Nur top bewertet
-                </label>
             </div>
 
-            <p style={{textAlign: "center", marginBottom: "25px", fontSize: "1rem", fontStyle: "italic"}}>
-                Zeige <strong>{ausgewählteKategorie}</strong> Texte von <strong>{ausgewählterAutor}</strong>, sortiert
-                nach <strong>{sortOption}</strong>.
+            <p style={infoStyle}>
+                Zeige <strong>{ausgewählteKategorie}</strong> Texte von <strong>{ausgewählterAutor}</strong>, sortiert nach <strong>{displaySortLabel[sortOption]}</strong>.
             </p>
 
-            <div style={{display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "24px"}}>
-                {aktuelleTexte.map((t) => (
-                    <div
-                        key={t.id}
-                        onClick={() => navigate(`/text/${t.id}`)}
-                        style={cardStyle}
-                        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}>
-                        <img
-                            src={t.bild}
-                            alt={t.ueberschrift}
-                            style={{
-                                width: "100%",
-                                height: "180px",
-                                objectFit: "cover",
-                                borderRadius: "8px 8px 0 0"
-                            }}/>
-                        <div style={{padding: "16px"}}>
+            {/* Kartenanzeige */}
+            <div style={cardsContainerStyle}>
+                {aktuelleTexte.map(t => (
+                    <div key={t.id} style={cardStyle}>
+                        {/* Weiße Leiste: Datum & Stern */}
+                        <div style={headerBarStyle}>
+                            <span>{new Date(t.datum).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+                            <span
+                                onClick={() => toggleStar(t.id)}
+                                style={starred[t.id] ? starFilledStyle : starEmptyStyle}
+                            >
+                ★
+              </span>
+                        </div>
+                        {/* Bild klickbar zur Detailseite */}
+                        <div onClick={() => navigate(`/text/${t.id}`)} style={imageWrapperStyle}>
+                            <img src={t.bild} alt={t.ueberschrift} style={imageStyle} />
+                        </div>
+                        <div style={cardContentStyle}>
                             <h3>{t.ueberschrift}</h3>
-                            <p style={{fontSize: "0.9rem", minHeight: "60px"}}>
-                                {t.kurzbeschreibung}
-                            </p>
-                            <div style={{marginTop: "1em"}}>
-                             <span
-                                 onClick={e => {
-                                     e.stopPropagation();
-                                     handleRatingClick(t.id, 1);
-                                 }}
-                                 style={{
-                                     cursor: "pointer",
-                                     fontSize: "22px",
-                                     color: parseInt(t.bewertung, 10) >= 1 ? "#ffb703" : "#ccc",
-                                     transition: "color 0.2s ease",
-                                 }}
-                             >
-      {parseInt(t.bewertung, 10) >= 1 ? "★" : "☆"}
-    </span>
+                            <p style={descriptionStyle}>{t.kurzbeschreibung}</p>
+                            <div style={votesStyle}>
+                                <span>👍 {t.daumenHoch}</span>
+                                <span>👎 {t.daumenRunter}</span>
                             </div>
                         </div>
-
                     </div>
                 ))}
             </div>
 
-            <div style={{marginTop: "30px", textAlign: "center"}}>
+            {/* Pagination */}
+            <div style={paginationStyle}>
                 {seite > 1 && <button onClick={() => setSeite(seite - 1)}>Zurück</button>}
                 {[...Array(totalPages)].map((_, i) => (
-                    <button
-                        key={i + 1}
-                        onClick={() => setSeite(i + 1)}
-                        style={{margin: "0 6px", fontWeight: seite === i + 1 ? "bold" : "normal"}}
-                    >
-                        {i + 1}
-                    </button>
+                    <button key={i+1} onClick={() => setSeite(i+1)} style={{ margin: '0 6px', fontWeight: seite === i+1 ? 'bold' : 'normal' }}>{i+1}</button>
                 ))}
                 {seite < totalPages && <button onClick={() => setSeite(seite + 1)}>Weiter</button>}
             </div>
@@ -178,36 +125,31 @@ function Home({texts, setTexts}) {
     );
 }
 
-const selectStyle = {
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    backgroundColor: "#ffffff",
-    color: "#333",
-    fontSize: "1rem",
+// Labels für SortOption
+const displaySortLabel = {
+    DatumNeu: 'Neueste zuerst',
+    DatumAlt: 'Älteste zuerst',
+    AutorAZ: 'Autor A–Z',
+    AutorZA: 'Autor Z–A',
+    AmBeliebtesten: 'Am beliebtesten',
+    AmMeistenBewertet: 'Am meisten bewertet'
 };
 
-const checkboxLabelStyle = {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    backgroundColor: "#ffffff",
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    fontSize: "0.95rem",
-    color: "#333",
-};
-
-const cardStyle = {
-    width: "280px",
-    borderRadius: "12px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-    backgroundColor: "#ffffff",
-    color: "#1a1a1a",
-    transition: "transform 0.3s ease, box-shadow 0.3s ease",
-    cursor: "pointer",
-    overflow: "hidden",
-};
+// Styles
+const filterBarStyle = { display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', justifyContent: 'center' };
+const inputStyle = { padding: '10px', borderRadius: '8px', border: '1px solid #ccc', backgroundColor: '#fff', color: '#333', minWidth: '200px', fontSize: '1rem' };
+const selectStyle = { padding: '10px', borderRadius: '8px', border: '1px solid #ccc', backgroundColor: '#fff', color: '#333', fontSize: '1rem' };
+const infoStyle = { textAlign: 'center', marginBottom: '25px', fontSize: '1rem', fontStyle: 'italic' };
+const cardsContainerStyle = { display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px' };
+const cardStyle = { width: '280px', position: 'relative', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', backgroundColor: '#ffffff', color: '#1a1a1a', overflow: 'hidden' };
+const headerBarStyle = { display: 'flex', justifyContent: 'space-between',alignItems: 'center', backgroundColor: '#fff', padding: '8px', borderBottom: '1px solid #eee' };
+const starEmptyStyle = { cursor: 'pointer', color: '#ccc', fontSize: '1.6rem', transition: 'transform 0.2s', };
+const starFilledStyle = { cursor: 'pointer', color: '#f4d03f', fontSize: '1.6rem', transform: 'scale(1.1)' };
+const imageWrapperStyle = { cursor: 'pointer' };
+const imageStyle = { width: '100%', height: '180px', objectFit: 'cover' };
+const cardContentStyle = { padding: '16px' };
+const descriptionStyle = { fontSize: '0.9rem', minHeight: '60px' };
+const votesStyle = { marginTop: '1em', fontSize: '1.1rem', display: 'flex', justifyContent: 'center', gap: '12px' };
+const paginationStyle = { marginTop: '30px', textAlign: 'center' };
 
 export default Home;

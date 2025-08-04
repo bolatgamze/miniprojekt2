@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 
-function TextDetail({ texts, setTexts }) {
+function TextDetail({ texts, setTexts, benutzern }) {
     const { id } = useParams();
     const text = texts.find((t) => t.id === parseInt(id));
 
@@ -33,6 +33,19 @@ function TextDetail({ texts, setTexts }) {
         setNeuerKommentar("");
     };
 
+    const handleKommentarLoeschen = (kommentarId) => {
+        const updatedTexts = texts.map(t => {
+            if (t.id === text.id) {
+                return {
+                    ...t,
+                    kommentare: t.kommentare.filter(k => k.id !== komentarId)
+                };
+            }
+            return t;
+        });
+        setTexts(updatedTexts);
+    };
+
     const handleDaumen = (typ) => {
         const updatedTexts = texts.map(t => {
             if (t.id === text.id) {
@@ -49,6 +62,7 @@ function TextDetail({ texts, setTexts }) {
 
     return (
         <div style={{ padding: "40px 20px 30px", maxWidth: "800px", margin: "0 auto" }}>
+            {/* Bild */}
             <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
                 <img
                     src={text.bild}
@@ -63,6 +77,7 @@ function TextDetail({ texts, setTexts }) {
                 />
             </div>
 
+            {/* Hauptinhalt */}
             <div style={{
                 backgroundColor: "rgba(255,255,255,0.85)",
                 padding: "24px",
@@ -71,7 +86,7 @@ function TextDetail({ texts, setTexts }) {
             }}>
                 <h2>{text.ueberschrift}</h2>
                 <p style={{ whiteSpace: "pre-wrap" }}>{text.text}</p>
-                <p><strong>Bewertung:</strong> {text.bewertung || "Noch keine"}</p>
+                <p><strong>Autor:</strong> {text.autor}</p>
                 <p><strong>Datum:</strong> {parsedDate}</p>
 
                 <div style={{
@@ -100,6 +115,7 @@ function TextDetail({ texts, setTexts }) {
 
             <hr style={{ margin: "30px 0" }} />
 
+            {/* Kommentare */}
             <div style={{
                 backgroundColor: "#f7f7f7",
                 padding: "20px",
@@ -109,21 +125,58 @@ function TextDetail({ texts, setTexts }) {
                 {text.kommentare.length === 0 ? (
                     <p>Noch keine Kommentare.</p>
                 ) : (
-                    text.kommentare.map(k => (
-                        <div key={k.id} style={{
-                            marginBottom: "12px",
-                            padding: "12px",
-                            backgroundColor: "#ffffff",
-                            borderRadius: "8px",
-                            boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
-                        }}>
-                            <strong>{k.autor}</strong>
-                            <p style={{ marginTop: "4px" }}>{k.inhalt}</p>
-                        </div>
-                    ))
+                    text.kommentare.map(k => {
+                        const user = benutzern.find(u => u.benutzername === k.autor) || {};
+
+                        return (
+                            <div key={k.id} style={{
+                                position: "relative",
+                                display: "flex",
+                                alignItems: "flex-start",
+                                gap: "12px",
+                                marginBottom: "12px",
+                                padding: "12px",
+                                backgroundColor: "#ffffff",
+                                borderRadius: "8px",
+                                boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+                            }}>
+                                <img
+                                    src={user.profilbild}
+                                    alt={k.autor}
+                                    style={{
+                                        width: "50px",
+                                        height: "50px",
+                                        borderRadius: "50%"
+                                    }}
+                                />
+                                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", flex: 1 }}>
+                                    <strong>{k.autor}</strong>
+                                    <p style={{ margin: "4px 0 0 0" }}>{k.inhalt}</p>
+                                </div>
+                                <button
+                                    onClick={() => handleKommentarLoeschen(k.id)}
+                                    style={{
+                                        position: "absolute",
+                                        bottom: "8px",
+                                        right: "8px",
+                                        backgroundColor: "#e63946",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "4px",
+                                        padding: "4px 8px",
+                                        cursor: "pointer",
+                                        fontSize: "12px"
+                                    }}
+                                >
+                                    Löschen
+                                </button>
+                            </div>
+                        );
+                    })
                 )}
             </div>
 
+            {/* Kommentar-Formular */}
             <div style={{
                 marginTop: "30px",
                 padding: "20px",

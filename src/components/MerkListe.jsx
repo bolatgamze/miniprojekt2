@@ -4,7 +4,7 @@ für die zusammenheit wieder in Card Form texte in der Merkliste können wir hie
 titel, kurze beschreibung wie im homepage
  */
 
-function MerkListe({benutzern}) {
+function MerkListe() {
     return (
         <div></div>
     );

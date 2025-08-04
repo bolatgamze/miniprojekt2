@@ -9,14 +9,13 @@ import MerkListe from "./components/MerkListe.jsx";
 import Entwuerfe from "./components/Entwuerfe.jsx";
 import Register from "./components/Register.jsx";
 import MeinProfil from "./components/MeinProfil.jsx";
+import NeuerText from "./components/NeuerText.jsx";
 
 import benutzerDaten from "./users.js";
 import textData from "./texts.js"
 
 import './App.css'
 import {useState} from "react";
-import NeuerText from "./components/NeuerText.jsx";
-
 
 
 function App() {
@@ -27,12 +26,12 @@ function App() {
         <>
             <NavBar />
             <Routes>
-                <Route path="/home" element={<Home texts={texts} setTexts={setTexts} />} />
-                <Route path="/text/:id" element={<TextDetail texts={texts} setTexts={setTexts} />} />
+                <Route path="/home" element={<Home texts={texts} setTexts={setTexts} benutzer={benutzern} setBenutzern={setBenutzern} />} />
+                <Route path="/text/:id" element={<TextDetail texts={texts} setTexts={setTexts} benutzern={benutzern} />} />
                 <Route path="/" element={<About />} />
                 <Route path="/login" element={<Login benutzern={benutzern} />} />
                 <Route path="/register" element={<Register benutzern={benutzern} setBenutzern={setBenutzern} />} />
-                <Route path="/admin" element={<AdminPanel benutzern={benutzern} />} />
+                <Route path="/admin" element={<AdminPanel benutzern={benutzern} setBenutzern={setBenutzern} />} />
                 <Route path="/meinprofil" element={<MeinProfil benutzern={benutzern} />} />
                 <Route path="/neuerText" element={<NeuerText texts={texts} setTexts={setTexts} />} />
                 <Route path="/entwuerfe" element={<Entwuerfe texts={texts} setTexts={setTexts} />} />
