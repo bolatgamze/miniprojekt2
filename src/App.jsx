@@ -23,6 +23,11 @@ function App() {
 
     const [benutzern, setBenutzern] = useState(benutzerDaten);
     const [texts, setTexts] = useState(textData);
+
+    const handleSaveNewText = (text) => {
+        setTexts([...texts, text]);
+    };
+
     return (
         <>
             <NavBar />
@@ -34,7 +39,7 @@ function App() {
                 <Route path="/register" element={<Register benutzern={benutzern} setBenutzern={setBenutzern} />} />
                 <Route path="/admin" element={<AdminPanel benutzern={benutzern} />} />
                 <Route path="/meinprofil" element={<MeinProfil benutzern={benutzern} />} />
-                <Route path="/neuerText" element={<NeuerText texts={texts} setTexts={setTexts} />} />
+                <Route path="/neuerText" element={<NeuerText onSave={handleSaveNewText} />} />
                 <Route path="/entwuerfe" element={<Entwuerfe texts={texts} setTexts={setTexts} />} />
                 <Route path="/merkliste" element={<MerkListe benutzern={benutzern} />} />
             </Routes>
