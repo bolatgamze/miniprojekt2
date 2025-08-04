@@ -145,7 +145,8 @@ function TextDetail({ texts, setTexts }) {
                         padding: "5px",
                         border: "1px solid #ccc",
                         borderRadius: "8px",
-                        backgroundColor: "#fff"
+                        backgroundColor: "#fff",
+                        color: "black"
                     }}
                 />
                 <textarea
@@ -158,7 +159,8 @@ function TextDetail({ texts, setTexts }) {
                         padding: "5px",
                         border: "1px solid #ccc",
                         borderRadius: "8px",
-                        backgroundColor: "#fff"
+                        backgroundColor: "#fff",
+                        color: "black"
                     }}
                 />
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
