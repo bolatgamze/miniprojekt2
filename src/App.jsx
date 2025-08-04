@@ -9,19 +9,32 @@ import MerkListe from "./components/MerkListe.jsx";
 import Entwuerfe from "./components/Entwuerfe.jsx";
 import Register from "./components/Register.jsx";
 import MeinProfil from "./components/MeinProfil.jsx";
-import NeuerText from "./components/NeuerText.jsx";
 
 import benutzerDaten from "./users.js";
 import textData from "./texts.js"
 
 import './App.css'
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import NeuerText from "./components/NeuerText.jsx";
+
 
 
 function App() {
 
     const [benutzern, setBenutzern] = useState(benutzerDaten);
-    const [texts, setTexts] = useState(textData);
+    const [texts, setTexts] = useState(() => {
+        const saved = localStorage.getItem('texts');
+        return saved ? JSON.parse(saved) : textData;
+    })
+
+    useEffect(() => {
+        localStorage.setItem('texts', JSON.stringify(texts));
+    }, [texts]);
+
+    const handleSaveNewText = (text) => {
+        setTexts([...texts, text]);
+    };
+
     return (
         <>
             <NavBar />
@@ -33,7 +46,7 @@ function App() {
                 <Route path="/register" element={<Register benutzern={benutzern} setBenutzern={setBenutzern} />} />
                 <Route path="/admin" element={<AdminPanel benutzern={benutzern} setBenutzern={setBenutzern} />} />
                 <Route path="/meinprofil" element={<MeinProfil benutzern={benutzern} />} />
-                <Route path="/neuerText" element={<NeuerText texts={texts} setTexts={setTexts} />} />
+                <Route path="/neuerText" element={<NeuerText onSave={handleSaveNewText} />} />
                 <Route path="/entwuerfe" element={<Entwuerfe texts={texts} setTexts={setTexts} />} />
                 <Route path="/merkliste" element={<MerkListe benutzern={benutzern} />} />
             </Routes>
