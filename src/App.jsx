@@ -14,7 +14,7 @@ import benutzerDaten from "./users.js";
 import textData from "./texts.js"
 
 import './App.css'
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import NeuerText from "./components/NeuerText.jsx";
 
 
@@ -22,7 +22,14 @@ import NeuerText from "./components/NeuerText.jsx";
 function App() {
 
     const [benutzern, setBenutzern] = useState(benutzerDaten);
-    const [texts, setTexts] = useState(textData);
+    const [texts, setTexts] = useState(() => {
+        const saved = localStorage.getItem('texts');
+        return saved ? JSON.parse(saved) : textData;
+    })
+
+    useEffect(() => {
+        localStorage.setItem('texts', JSON.stringify(texts));
+    }, [texts]);
 
     const handleSaveNewText = (text) => {
         setTexts([...texts, text]);
