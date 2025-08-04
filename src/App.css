@@ -1,3 +1,18 @@
+:root {
+  --background: #fef6e4;
+  --primary: #ff8360;
+  --text-dark: #1a1a1a;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: bisque;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: black;
+  min-height: 100vh;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,50 +20,63 @@
   text-align: center;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  background-image: url('/hintergrund.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  min-height: 100vh;
-  font-family: sans-serif;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ff8360;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navLinks {
+  display: flex;
+  gap: 20px;
+}
+
+.navLink {
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.navLink:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
 }
 
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+button:hover {
+  background-color: #e56a4d;
 }
 
 .card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
   padding: 2em;
+  margin: 1rem auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.read-the-docs {
-  color: #888;
+.logo {
+  height: 5em;
+  padding: 1em;
+  transition: transform 0.3s ease;
+}
+.logo:hover {
+  transform: scale(1.05);
 }

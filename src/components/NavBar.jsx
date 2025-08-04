@@ -1,83 +1,30 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+/*
+bei navbar als gast kann man nur home about und login sehen
+adminpanel, entwürfe und neuer text sind nur für admin
+und merkliste ist nur für user
+
+wo 'mein profil' steht, hätte ich gerne profil bild vom user
+ */
+
 function NavBar() {
-    const linkStyle = {
-        textDecoration: 'none',
-        color: 'white',
-        fontWeight: '500',
-        fontSize: '16px',
-        padding: '8px 12px',
-        borderRadius: '5px',
-        transition: 'background-color 0.3s ease',
-    };
-
-    const hoverStyle = {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    };
-
     return (
-        <nav style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: '#2d0037', // siyaha yakın mor
-            padding: '15px 30px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.7)',
-        }}>
-            <div style={{ display: 'flex', gap: '25px' }}>
-                <Link
-                    to="/"
-                    style={linkStyle}
-                    onMouseOver={(e) => Object.assign(e.target.style, hoverStyle)}
-                    onMouseOut={(e) => Object.assign(e.target.style, { backgroundColor: 'transparent' })}
-                >
-                    Home
-                </Link>
-                <Link
-                    to="/admin"
-                    style={linkStyle}
-                    onMouseOver={(e) => Object.assign(e.target.style, hoverStyle)}
-                    onMouseOut={(e) => Object.assign(e.target.style, { backgroundColor: 'transparent' })}
-                >
-                    Admin Panel
-                </Link>
-                <Link
-                    to="/entwuerfe"
-                    style={linkStyle}
-                    onMouseOver={(e) => Object.assign(e.target.style, hoverStyle)}
-                    onMouseOut={(e) => Object.assign(e.target.style, { backgroundColor: 'transparent' })}
-                >
-                    Entwürfe
-                </Link>
-                <Link
-                    to="/merkliste"
-                    style={linkStyle}
-                    onMouseOver={(e) => Object.assign(e.target.style, hoverStyle)}
-                    onMouseOut={(e) => Object.assign(e.target.style, { backgroundColor: 'transparent' })}
-                >
-                    Merkliste
-                </Link>
-
-                <Link
-                    to="/about"
-                    style={linkStyle}
-                    onMouseOver={(e) => Object.assign(e.target.style, hoverStyle)}
-                    onMouseOut={(e) => Object.assign(e.target.style, { backgroundColor: 'transparent' })}
-                >
-                    About
-                </Link>
+        <nav className="navbar">
+            <div className="navLinks">
+                <Link to="/home" className="navLink">Home</Link>
+                <Link to="/admin" className="navLink">Admin Panel</Link>
+                <Link to="/neuerText" className="navLink">Neuer Text</Link>
+                <Link to="/entwuerfe" className="navLink">Entwürfe</Link>
+                <Link to="/merkliste" className="navLink">Merkliste</Link>
+                <Link to="/" className="navLink">About</Link>
             </div>
 
             <div>
-                <Link
-                    to="/login"
-                    style={linkStyle}
-                    onMouseOver={(e) => Object.assign(e.target.style, hoverStyle)}
-                    onMouseOut={(e) => Object.assign(e.target.style, { backgroundColor: 'transparent' })}
-                >
-                    Login
-                </Link>
+                <Link to="/profil" className="navLink">Mein Profil</Link>
+
+                <Link to="/login" className="navLink">Login</Link>
             </div>
         </nav>
     );
