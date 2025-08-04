@@ -26,6 +26,24 @@ function App() {
         const saved = localStorage.getItem('texts');
         return saved ? JSON.parse(saved) : textData;
     })
+    const [currentUser, setCurrenUser] = useState(
+    {
+        benutzername: "Gandalf",
+            status: "admin",
+        email: "gandalf@katzenzauber.meow",
+        profilbild: "/profilbilder/gandalf.PNG",
+        typ: "Katze",
+        beigetretenAm: "2022-01-01",
+        zuletztOnline: "2025-08-03",
+        texte: [4, 5],
+        textKommentare: [
+        { textId: 2, inhalt: "Ich will das Foto sehen! 😹" },
+        { textId: 5, inhalt: "Punkt 3 ist revolutionär. Muss ich mal ausprobieren!" },
+        { textId: 11, inhalt: "Ich hab den Tierarzt gebissen. Keine Reue." },
+        { textId: 13, inhalt: "Ich wär sofort abgebogen bei dem Haufen Natur..." }
+    ],
+        entwuerfe: {}, merkliste: [1, 8]
+    })
 
     useEffect(() => {
         localStorage.setItem('texts', JSON.stringify(texts));
@@ -39,16 +57,16 @@ function App() {
         <>
             <NavBar />
             <Routes>
-                <Route path="/home" element={<Home texts={texts} setTexts={setTexts} benutzer={benutzern} setBenutzern={setBenutzern} />} />
+                <Route path="/home" element={<Home texts={texts} setTexts={setTexts} benutzer={benutzern} setBenutzern={setBenutzern} currentUser={currentUser}/>} />
                 <Route path="/text/:id" element={<TextDetail texts={texts} setTexts={setTexts} benutzern={benutzern} />} />
                 <Route path="/" element={<About />} />
                 <Route path="/login" element={<Login benutzern={benutzern} />} />
                 <Route path="/register" element={<Register benutzern={benutzern} setBenutzern={setBenutzern} />} />
                 <Route path="/admin" element={<AdminPanel benutzern={benutzern} setBenutzern={setBenutzern} />} />
-                <Route path="/meinprofil" element={<MeinProfil benutzern={benutzern} />} />
-                <Route path="/neuerText" element={<NeuerText onSave={handleSaveNewText} />} />
-                <Route path="/entwuerfe" element={<Entwuerfe texts={texts} setTexts={setTexts} />} />
-                <Route path="/merkliste" element={<MerkListe benutzern={benutzern} />} />
+                <Route path="/meinprofil" element={<MeinProfil benutzern={benutzern} currentUser={currentUser} />} />
+                <Route path="/neuerText" element={<NeuerText onSave={handleSaveNewText} currentUser={currentUser} />} />
+                <Route path="/entwuerfe" element={<Entwuerfe texts={texts} setTexts={setTexts} currentUser={currentUser} />} />
+                <Route path="/merkliste" element={<MerkListe benutzern={benutzern} currentUser={currentUser} />} />
             </Routes>
         </>
     );
