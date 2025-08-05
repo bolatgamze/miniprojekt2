@@ -45,7 +45,8 @@ function App() {
             { textId: 5, inhalt: "Punkt 3 ist revolutionär. Muss ich mal ausprobieren!" },
             { textId: 11, inhalt: "Ich hab den Tierarzt gebissen. Keine Reue." },
             { textId: 13, inhalt: "Ich wär sofort abgebogen bei dem Haufen Natur..." }
-        ]
+        ],
+        merkliste: [1, 8]
     });
 
     const [entwuerfe, setEntwuerfe] = useState([]);
@@ -126,6 +127,9 @@ function App() {
                         <MeinProfil
                             benutzern={benutzern}
                             currentUser={currentUser}
+                            entwuerfe={entwuerfe}
+                            merkliste={merkliste}
+                            texts={texts}
                         />
                     }
                 />

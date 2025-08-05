@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 function AdminPanel({ benutzern, setBenutzern }) {
     // Admins und Users
@@ -7,7 +7,7 @@ function AdminPanel({ benutzern, setBenutzern }) {
         .filter(u => u.status === 'user')
         .sort((a, b) => new Date(a.beigetretenAm) - new Date(b.beigetretenAm));
 
-    // Pagination für Users (Seiten mit Vielfachen von 3)
+    // Pagination für Users (Seiten mit Vielfachen von 9)
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 9;
     const indexOfLastUser = currentPage * usersPerPage;
@@ -15,7 +15,7 @@ function AdminPanel({ benutzern, setBenutzern }) {
     const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
     const totalPages = Math.ceil(users.length / usersPerPage);
 
-    const handleDeleteUser = (username) => {
+    const handleDeleteUser = username => {
         if (window.confirm(`Willst du den Benutzer "${username}" wirklich löschen?`)) {
             setBenutzern(benutzern.filter(u => u.benutzername !== username));
         }
@@ -76,9 +76,35 @@ function AdminPanel({ benutzern, setBenutzern }) {
             </div>
 
             <div style={styles.pagination}>
-                <button style={styles.pageBtn} onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>Zurück</button>
+                <button
+                    style={styles.pageBtn}
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                >
+                    {'<<'}
+                </button>
+                <button
+                    style={styles.pageBtn}
+                    onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                    disabled={currentPage === 1}
+                >
+                    Zurück
+                </button>
                 <span>Seite {currentPage} von {totalPages}</span>
-                <button style={styles.pageBtn} onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>Weiter</button>
+                <button
+                    style={styles.pageBtn}
+                    onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                >
+                    Weiter
+                </button>
+                <button
+                    style={styles.pageBtn}
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                >
+                    {'>>'}
+                </button>
             </div>
         </div>
     );
