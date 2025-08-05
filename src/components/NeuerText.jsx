@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
 
-function NeuerText({ onSave, existingPost }) {
+function NeuerText({ texts, setTexts, entwuerfe, setEntwuerfe }) {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const existingPost = location.state?.existingPost;
+    const isDraft = location.state?.isDraft;
+
     const [ueberschrift, setUeberschrift] = useState('');
     const [kurzbeschreibung, setKurzbeschreibung] = useState('');
     const [text, setText] = useState('');
@@ -12,28 +19,26 @@ function NeuerText({ onSave, existingPost }) {
     const [autor, setAutor] = useState('');
     const [kommentare, setKommentare] = useState([]);
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0]; // Das erste ausgewählte Bild
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setBild(reader.result); // Bild wird als Base64-String gesetzt
-            };
-            reader.readAsDataURL(file); // Startet das Einlesen der Datei
-        }
-    };
-
     useEffect(() => {
         if (existingPost) {
             setUeberschrift(existingPost.ueberschrift);
             setKurzbeschreibung(existingPost.kurzbeschreibung);
             setText(existingPost.text);
             setKategorie(existingPost.kategorie);
-            setBild(existingPost.bild); // Bild aus existingPost laden
+            setBild(existingPost.bild);
             setDatum(existingPost.datum);
             setAutor(existingPost.autor);
         }
     }, [existingPost]);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => setBild(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -44,7 +49,7 @@ function NeuerText({ onSave, existingPost }) {
             kurzbeschreibung,
             text,
             kategorie,
-            bild,  // Bild wird als Teil des Textobjekts gespeichert
+            bild,
             datum,
             daumenHoch,
             daumenRunter,
@@ -52,27 +57,30 @@ function NeuerText({ onSave, existingPost }) {
             kommentare
         };
 
-        onSave(updatedPost); // Speichern der gesamten Textdaten, inklusive Bild
+        if (isDraft) {
+            // Entwurf wurde bearbeitet und veröffentlicht
+            const neueTexte = [...texts, updatedPost];
+            setTexts(neueTexte);
+            localStorage.setItem("texts", JSON.stringify(neueTexte));
 
-        // Felder zurücksetzen
-        if (!existingPost) {
-            setUeberschrift('');
-            setKurzbeschreibung('');
-            setText('');
-            setKategorie('');
-            setBild(null);  // Zurücksetzen des Bildes
-            setDatum(new Date().toISOString().split("T")[0]);
-            setDaumenHoch(0);
-            setDaumenRunter(0);
-            setAutor('');
-            setKommentare([]);
+            const gefilterte = entwuerfe.filter(e => e.id !== updatedPost.id);
+            setEntwuerfe(gefilterte);
+            localStorage.setItem("entwuerfe", JSON.stringify(gefilterte));
+
+            navigate("/home");
+        } else {
+            // Neuen Beitrag als Entwurf speichern
+            const neueEntwuerfe = [...entwuerfe, updatedPost];
+            setEntwuerfe(neueEntwuerfe);
+            localStorage.setItem("entwuerfe", JSON.stringify(neueEntwuerfe));
+
+            navigate("/entwuerfe");
         }
     };
 
     return (
         <div style={{ padding: "40px 20px 30px", maxWidth: "800px", margin: "0 auto" }}>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-
                 <input
                     placeholder="Überschrift"
                     value={ueberschrift}
@@ -80,21 +88,18 @@ function NeuerText({ onSave, existingPost }) {
                     required
                     style={{ padding: '0.5rem', fontSize: '1rem' }}
                 />
-
                 <textarea
                     placeholder="Kurzbeschreibung"
                     value={kurzbeschreibung}
                     onChange={(e) => setKurzbeschreibung(e.target.value)}
                     style={{ padding: '0.5rem', fontSize: '1rem', resize: 'vertical' }}
                 />
-
                 <textarea
                     placeholder="Text"
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     style={{ padding: '0.5rem', fontSize: '1rem', height: '250px', resize: 'vertical' }}
                 />
-
                 <select
                     value={kategorie}
                     onChange={(e) => setKategorie(e.target.value)}
@@ -118,7 +123,7 @@ function NeuerText({ onSave, existingPost }) {
                     <span>Bild hochladen:</span>
                     <input
                         type="file"
-                        accept="image/*" // Nur Bilddateien zulassen
+                        accept="image/*"
                         onChange={handleImageChange}
                         style={{ padding: '0.5rem', fontSize: '1rem' }}
                     />
@@ -130,7 +135,7 @@ function NeuerText({ onSave, existingPost }) {
                     onChange={(e) => setDatum(e.target.value)}
                     required
                     style={{ padding: '0.5rem', fontSize: '1rem' }}
-                    max={new Date().toISOString().split("T")[0]} // optional: verhindert, dass der Benutzer in die Zukunft wählt
+                    max={new Date().toISOString().split("T")[0]}
                 />
 
                 <select
@@ -148,10 +153,10 @@ function NeuerText({ onSave, existingPost }) {
 
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem' }}>
                     <button type="submit">
-                        {existingPost ? 'Änderungen speichern' : 'Post speichern'}
+                        {existingPost ? 'Änderungen speichern' : 'Als Entwurf speichern'}
                     </button>
                     {existingPost && (
-                        <button type="button">
+                        <button type="button" onClick={() => navigate("/entwuerfe")}>
                             Abbrechen
                         </button>
                     )}

@@ -34,12 +34,15 @@ function Home({ texts, setTexts, benutzern, setBenutzern, currentUser, merkliste
     };
 
     // Filter
-    let gefilterteTexte = texts.filter(t => {
-        const katMatch = ausgewählteKategorie === "Alle" || t.kategorie === ausgewählteKategorie;
-        const authMatch = ausgewählterAutor === "Alle" || t.autor === ausgewählterAutor;
-        const titelMatch = t.ueberschrift.toLowerCase().includes(suchbegriff.toLowerCase());
-        return katMatch && authMatch && titelMatch;
-    });
+    let gefilterteTexte = texts
+        .filter(t => t && t.ueberschrift && t.kategorie && t.autor)
+        .filter(t => {
+            const katMatch = ausgewählteKategorie === "Alle" || t.kategorie === ausgewählteKategorie;
+            const authMatch = ausgewählterAutor === "Alle" || t.autor === ausgewählterAutor;
+            const titelMatch = t.ueberschrift.toLowerCase().includes(suchbegriff.toLowerCase());
+            return katMatch && authMatch && titelMatch;
+        });
+
 
     // Sortierung
     gefilterteTexte.sort((a, b) => {

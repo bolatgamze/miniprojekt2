@@ -1,26 +1,37 @@
 import React from 'react';
-
-//als admin kann man hier seine eigene entwürfe sehen und posten.
-// im Card Form kann man listen und an der rechten Ecke "posten" button wäre cool
 import { useNavigate } from "react-router-dom";
+
+// Als Admin kann man hier seine eigenen Entwürfe sehen und posten.
+// Im Card-Form-Design kann man die Liste sehen, rechts mit Buttons für Bearbeiten, Veröffentlichen und Löschen
 
 function Entwuerfe({ entwuerfe, setEntwuerfe, texts, setTexts }) {
     const navigate = useNavigate();
 
     const handleLoeschen = (eintrag) => {
         if (window.confirm("Möchtest du diesen Entwurf wirklich löschen?")) {
-            setEntwuerfe(entwuerfe.filter(e => e !== eintrag));
+            const neueEntwuerfe = entwuerfe.filter(e => e.id !== eintrag.id);
+            setEntwuerfe(neueEntwuerfe);
         }
     };
 
     const handleBearbeiten = (eintrag) => {
-        navigate("/neuerText", { state: { existingPost: eintrag } });
+        navigate("/neuerText", {
+            state: {
+                existingPost: eintrag,
+                isDraft: true
+            }
+        });
     };
 
     const handleVeroeffentlichen = (eintrag) => {
         if (window.confirm("Diesen Entwurf veröffentlichen?")) {
-            setTexts([...texts, eintrag]);
-            setEntwuerfe(entwuerfe.filter(e => e !== eintrag));
+            // Navigiere zum Formular mit Veröffentlichung
+            navigate("/neuerText", {
+                state: {
+                    existingPost: eintrag,
+                    isDraft: true
+                }
+            });
         }
     };
 
