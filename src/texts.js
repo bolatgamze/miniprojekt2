@@ -678,7 +678,8 @@ Rufus 🐾`,
                 inhalt: "So viel Energie! Und ich dachte, ich bin verrückt."
             }
         ]
-    },
+    }
+
 ];
 export default texts;
 

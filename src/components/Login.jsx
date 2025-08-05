@@ -19,7 +19,7 @@ function Login({ benutzern, setCurrentUser, currentUser }) {
             return;
         }
 
-        if (benutzer.passwort !== passwort) {
+        if (benutzer.password !== passwort) {
             setError('Falsches Passwort!');
             return;
         }
@@ -27,7 +27,7 @@ function Login({ benutzern, setCurrentUser, currentUser }) {
         // Erfolgreiches Login
         setCurrentUser(benutzer);
         setError('');
-        alert(`Willkommen, ${benutzer.benutzername}!`);  // Hier kannst du auch weiterleiten oder den Zustand ändern
+
 
         // Beispiel: Weiterleitung zur Home-Seite oder zum Benutzerprofil
         // Mit React Router: history.push('/home');

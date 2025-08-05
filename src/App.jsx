@@ -188,9 +188,6 @@ Schlafen ist der wahre Lifestyle. Wer’s noch nicht probiert hat, verpasst was!
                             entwuerfe={entwuerfe}
                             merkliste={merkliste}
                             texts={texts}
-                            setTexts={setTexts}
-                            setEntwuerfe={setEntwuerfe}
-                            setCurrentUser={setCurrentUser}
                         />
                     }
                 />

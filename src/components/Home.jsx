@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 
 /*
@@ -32,6 +32,7 @@ function Home({ texts, setTexts, benutzern, setBenutzern, currentUser, merkliste
             setMerkliste([...merkliste, text]);
         }
     };
+
 
     // Filter
     let gefilterteTexte = texts.filter(t => {
