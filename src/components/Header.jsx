@@ -14,7 +14,7 @@ function Header() {
         <header style={styles.header}>
             <div style={styles.logoSection}>
                 <FaCat style={styles.iconCat} />
-                <h1 style={styles.title}>Katzen & Hunde Blog</h1>
+                <h1 style={styles.title}>Vier Pfoten Blog</h1>
                 <FaDog style={styles.iconDog} />
             </div>
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {Link} from "react-router-dom";
 
 function Login({ benutzern, setCurrentUser, currentUser }) {
     const [email, setEmail] = useState('');
@@ -68,6 +69,10 @@ function Login({ benutzern, setCurrentUser, currentUser }) {
                     <button type="submit" style={{ padding: '0.5rem', fontSize: '1rem', cursor: 'pointer' }}>
                         Anmelden
                     </button>
+                    <div style={{ marginTop: '1rem' }}>
+                        <span>Noch nicht registriert? </span>
+                        <Link to="/register" style={{ color: 'blue', textDecoration: 'underline' }}>Jetzt registrieren</Link>
+                    </div>
                 </form>
             )}
         </div>

@@ -64,10 +64,14 @@ function App() {
         setTexts([...texts, text]);
     };
 
+    const handleLogout = () => {
+        setCurrentUser(null);
+    }
+
     return (
         <>
             <Header />
-            <NavBar user={currentUser} />
+            <NavBar user={currentUser} handleLogout={handleLogout} />
 
             <Routes>
                 <Route path="/home" element={
