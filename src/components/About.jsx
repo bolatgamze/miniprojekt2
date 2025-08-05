@@ -35,11 +35,11 @@ const pets = [
     {
         name: 'Rufus',
         img: 'rufusa.PNG',
-        age: '',
+        age: '10',
         species: 'Hund',
-        breed: '',
+        breed: 'Chihuahua-Papillon-Mischling',
         location: 'Münster',
-        story: ''
+        story: 'Rufus ist ein quirliger Chihuahua-Papillon-Mischling, der gerne kuschelt und viel schläft. Besonders lieb hat er seine Kuscheltiere, die er manchmal mit viel Eifer "verändert", indem er ihnen Körperteile amputiert. Trotz seiner Niedlichkeit ist er ein aufmerksamer Wachhund, der stets ein Auge auf alles hat, was um ihn herum passiert. '
     }
 ];
 

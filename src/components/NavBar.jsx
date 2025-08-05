@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
  * - user: { benutzername, status, profilbild }
  *   status: 'guest' | 'user' | 'admin'
  */
-function NavBar({ user }) {
+function NavBar({ user, handleLogout }) {
     const role = user?.status || 'guest';
     const avatarUrl = user?.profilbild || '';
 
@@ -39,10 +39,10 @@ function NavBar({ user }) {
                             <Link to="/meinprofil" style={styles.profileLink}>
                                 <img src={avatarUrl} alt="Profilbild" style={styles.avatar} />
                             </Link>
-                            <Link to="/logout" className="navLink" style={styles.logoutLink}>Logout</Link>
+                            <Link to="/home" onClick={handleLogout} className="navLink" style={styles.logoutLink}>Logout</Link>
                         </>
                     ) : (
-                        <Link to="/login" className="navLink">Login</Link>
+                        <Link to="/login" className="navLink" style={styles.logoutLink}>Login</Link>
                     )}
                 </div>
             </div>

@@ -24,7 +24,8 @@ function Home({ texts, setTexts, benutzern, setBenutzern, currentUser, merkliste
         return merkliste.includes(text);
     };
 
-    const toggleMerken = (text) => {
+    const toggleMerken = (e, text) => {
+        e.stopPropagation()
         if (istGemerkterText(text)) {
             setMerkliste(merkliste.filter(t => t !== text));
         } else {
@@ -90,22 +91,22 @@ function Home({ texts, setTexts, benutzern, setBenutzern, currentUser, merkliste
             </p>
 
             {/* Kartenanzeige */}
-            <div style={cardsContainerStyle}>
+            <div style={cardsContainerStyle} >
                 {aktuelleTexte.map(t => (
-                    <div key={t.id} style={cardStyle}>
+                    <div key={t.id} style={cardStyle} onClick={() => navigate(`/text/${t.id}`)}>
                         {/* Weiße Leiste: Datum & Stern */}
                         <div style={headerBarStyle}>
                             <span>{new Date(t.datum).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
                             <span
-                                onClick={() => toggleMerken(t)}
+                                onClick={(e) => toggleMerken(e, t)}
                                 style={istGemerkterText(t) ? starFilledStyle : starEmptyStyle}
                                 title="Zur Merkliste hinzufügen oder entfernen"
                             >
-  ★
-</span>
+                             ★
+                            </span>
                         </div>
                         {/* Bild klickbar zur Detailseite */}
-                        <div onClick={() => navigate(`/text/${t.id}`)} style={imageWrapperStyle}>
+                        <div  style={imageWrapperStyle}>
                             <img src={t.bild} alt={t.ueberschrift} style={imageStyle} />
                         </div>
                         <div style={cardContentStyle}>
@@ -148,7 +149,7 @@ const inputStyle = { padding: '10px', borderRadius: '8px', border: '1px solid #c
 const selectStyle = { padding: '10px', borderRadius: '8px', border: '1px solid #ccc', backgroundColor: '#fff', color: '#333', fontSize: '1rem' };
 const infoStyle = { textAlign: 'center', marginBottom: '25px', fontSize: '1rem', fontStyle: 'italic' };
 const cardsContainerStyle = { display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px' };
-const cardStyle = { width: '280px', position: 'relative', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', backgroundColor: '#ffffff', color: '#1a1a1a', overflow: 'hidden' };
+const cardStyle = { cursor:'pointer', width: '280px', position: 'relative', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', backgroundColor: '#ffffff', color: '#1a1a1a', overflow: 'hidden' };
 const headerBarStyle = { display: 'flex', justifyContent: 'space-between',alignItems: 'center', backgroundColor: '#fff', padding: '8px', borderBottom: '1px solid #eee' };
 const starEmptyStyle = { cursor: 'pointer', color: '#ccc', fontSize: '1.6rem', transition: 'transform 0.2s', };
 const starFilledStyle = { cursor: 'pointer', color: '#f4d03f', fontSize: '1.6rem', transform: 'scale(1.1)' };
