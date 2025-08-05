@@ -679,8 +679,6 @@ Rufus 🐾`,
             }
         ]
     },
-    {}
-
 ];
 export default texts;
 

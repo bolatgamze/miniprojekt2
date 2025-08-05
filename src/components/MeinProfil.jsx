@@ -1,7 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
+function MeinProfil({
+                        currentUser,
+                        texts = [],
+                        entwuerfe = [],
+                        merkliste = [],
+                        setTexts,
+                        setEntwuerfe,
+                        setCurrentUser
+                    }) {
     const navigate = useNavigate();
 
     // Styles
@@ -27,11 +35,7 @@ function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
             objectPosition: 'top',
             border: '2px solid #555'
         },
-        userInfo: {
-            flex: 1,
-            textAlign: 'center',
-            color: 'black'
-        },
+        userInfo: { flex: 1, textAlign: 'center', color: 'black' },
         sectionTitle: { fontSize: '1.3rem', fontWeight: 'bold', color: '#333', margin: '1.5rem 0 0.5rem' },
         hr: { border: 'none', borderTop: '2px solid #ff8360', margin: '1rem 0' },
         cardsContainer: { display: 'flex', flexWrap: 'wrap', gap: '24px', justifyContent: 'center' },
@@ -47,6 +51,15 @@ function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
         imageWrapper: { width: '100%', height: '150px', overflow: 'hidden' },
         image: { width: '100%', height: '100%', objectFit: 'cover' },
         cardContent: { padding: '16px' },
+        deleteButton: {
+            marginTop: '10px',
+            padding: '6px 12px',
+            backgroundColor: '#e74c3c',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+        },
         commentCard: {
             backgroundColor: '#ffffff',
             padding: '12px',
@@ -57,22 +70,37 @@ function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
         commentLink: { color: '#ff8360', textDecoration: 'underline', cursor: 'pointer' }
     };
 
-    // Eigene Texte basierend auf Benutzer-IDs
-    const userTextIds = new Set((currentUser.texte || []).map(id => id.toString()));
-    const meineTexte = texts.filter(t => userTextIds.has(t.id.toString()));
+    // Delete handlers
+    const handleDeleteText = (id) => {
+        setTexts((prev) => prev.filter((t) => t.id !== id));
+        setCurrentUser((prev) => ({
+            ...prev,
+            texte: prev.texte.filter((tid) => tid !== id)
+        }));
+    };
 
-    // Entwürfe aus Profil- und Session-Prop zusammenführen
+    const handleDeleteDraft = (id) => {
+        setEntwuerfe((prev) => prev.filter((d) => d.id !== id));
+        setCurrentUser((prev) => ({
+            ...prev,
+            entwuerfe: prev.entwuerfe.filter((d) => d.id !== id)
+        }));
+    };
+
+    // Eigene Texte basierend auf Benutzer-IDs
+    const userTextIds = new Set((currentUser.texte || []).map((id) => id.toString()));
+    const meineTexte = texts.filter((t) => userTextIds.has(t.id.toString()));
+
+    // Entwürfe aus Profil- und Session-Prop
     const profileDrafts = Array.isArray(currentUser.entwuerfe) ? currentUser.entwuerfe : [];
     const sessionDrafts = Array.isArray(entwuerfe) ? entwuerfe : [];
     const allDrafts = [...profileDrafts, ...sessionDrafts];
 
-    // Merkliste IDs aus Profil und Session
+    // Merkliste IDs
     const profileBookmarks = Array.isArray(currentUser.merkliste) ? currentUser.merkliste : [];
     const sessionBookmarks = Array.isArray(merkliste) ? merkliste : [];
     const allBookmarkIds = [...profileBookmarks, ...sessionBookmarks];
-    // Texte für Merkliste
-    const bookmarkedTexts = texts.filter(t => allBookmarkIds.includes(t.id));
-
+    const bookmarkedTexts = texts.filter((t) => allBookmarkIds.includes(t.id));
 
     return (
         <div style={styles.container}>
@@ -94,7 +122,7 @@ function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
                 <>
                     <h3 style={styles.sectionTitle}>Meine Texte</h3>
                     <div style={styles.cardsContainer}>
-                        {meineTexte.length > 0 ? meineTexte.map(text => (
+                        {meineTexte.length > 0 ? meineTexte.map((text) => (
                             <div
                                 key={text.id}
                                 style={styles.card}
@@ -111,6 +139,12 @@ function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
                                 <div style={styles.cardContent}>
                                     <h4>{text.ueberschrift}</h4>
                                     <p>{text.kurzbeschreibung}</p>
+                                    <button
+                                        style={styles.deleteButton}
+                                        onClick={(e) => { e.stopPropagation(); handleDeleteText(text.id); }}
+                                    >
+                                        Löschen
+                                    </button>
                                 </div>
                             </div>
                         )) : <p>Keine eigenen Texte vorhanden.</p>}
@@ -121,11 +155,29 @@ function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
                     {/* Entwürfe */}
                     <h3 style={styles.sectionTitle}>Entwürfe</h3>
                     <div style={styles.cardsContainer}>
-                        {allDrafts.length > 0 ? allDrafts.map((draft, idx) => (
-                            <div key={idx} style={styles.card}>
+                        {allDrafts.length > 0 ? allDrafts.map((draft) => (
+                            <div key={draft.id} style={styles.card}>
+                                {draft.datum && (
+                                    <div style={styles.headerBar}>
+                                        {new Date(draft.datum).toLocaleDateString('de-DE', {
+                                            day: '2-digit', month: 'long', year: 'numeric'
+                                        })}
+                                    </div>
+                                )}
+                                {draft.bild && (
+                                    <div style={styles.imageWrapper}>
+                                        <img src={draft.bild} alt={draft.ueberschrift} style={styles.image} />
+                                    </div>
+                                )}
                                 <div style={styles.cardContent}>
                                     <h4>{draft.ueberschrift || 'Unbenannter Entwurf'}</h4>
                                     <p>{draft.kurzbeschreibung || 'Keine Vorschau verfügbar'}</p>
+                                    <button
+                                        style={styles.deleteButton}
+                                        onClick={() => handleDeleteDraft(draft.id)}
+                                    >
+                                        Löschen
+                                    </button>
                                 </div>
                             </div>
                         )) : <p>Keine Entwürfe vorhanden.</p>}
@@ -140,7 +192,7 @@ function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
                 <>
                     <h3 style={styles.sectionTitle}>Merkliste</h3>
                     <div style={styles.cardsContainer}>
-                        {bookmarkedTexts.length > 0 ? bookmarkedTexts.map(text => (
+                        {bookmarkedTexts.length > 0 ? bookmarkedTexts.map((text) => (
                             <div
                                 key={text.id}
                                 style={styles.card}
@@ -170,7 +222,7 @@ function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
             <h3 style={styles.sectionTitle}>Kommentare</h3>
             <div>
                 {currentUser.textKommentare.map((kommentar, idx) => {
-                    const text = texts.find(t => t.id === kommentar.textId);
+                    const text = texts.find((t) => t.id === kommentar.textId);
                     if (!text) return null;
                     return (
                         <div key={idx} style={styles.commentCard}>
@@ -180,8 +232,8 @@ function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
                                     style={styles.commentLink}
                                     onClick={() => navigate(`/text/${text.id}`)}
                                 >
-                                    {text.ueberschrift}
-                                </span> von <strong>{text.autor}</strong>:
+                  {text.ueberschrift}
+                </span> von <strong>{text.autor}</strong>:
                             </p>
                             <p>"{kommentar.inhalt}"</p>
                         </div>
