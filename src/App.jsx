@@ -167,7 +167,6 @@ function App() {
                     }
                 />
             </Routes>
-
             <Footer />
         </>
     );
