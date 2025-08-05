@@ -35,13 +35,18 @@ function Register({ benutzern, setBenutzern }) {
             return;
         }
 
+        const defaultImg =
+            typ === "Katze"
+                ? "/profilbilder/defaultkatze.PNG"
+                : "/profilbilder/defaulthund.PNG";
+
         // Erstellen des neuen Benutzers
         const neuerBenutzer = {
             benutzername,
             status: 'user', // Der Status eines neuen Benutzers ist standardmäßig "user"
             email,
             passwort, // Passwörter sollten normalerweise sicher gespeichert werden
-            profilbild,
+            profilbild: profilbild || defaultImg,
             typ,
             beigetretenAm,
             zuletztOnline: new Date().toISOString().split("T")[0],

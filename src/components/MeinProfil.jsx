@@ -1,7 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function MeinProfil({ currentUser, texts = [], entwuerfe, merkliste }) {
+function MeinProfil({
+                        currentUser,
+                        texts = [],
+                        entwuerfe = [],
+                        merkliste = [],
+                        setTexts,
+                        setEntwuerfe,
+                        setCurrentUser
+                    }) {
     const navigate = useNavigate();
 
     // Styles
@@ -68,7 +76,7 @@ function MeinProfil({ currentUser, texts = [], entwuerfe, merkliste }) {
 
     // Merkliste IDs aus Profil und Session
     const profileBookmarks = Array.isArray(currentUser.merkliste) ? currentUser.merkliste : [];
-    const sessionBookmarks = Array.isArray(merkliste) ? merkliste.map(item => item.id) : [];
+    const sessionBookmarks = Array.isArray(merkliste) ? merkliste : [];
     const allBookmarkIds = [...profileBookmarks, ...sessionBookmarks];
     // Texte für Merkliste
     const bookmarkedTexts = texts.filter(t => allBookmarkIds.includes(t.id));
