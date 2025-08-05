@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function MeinProfil({ currentUser, texts, entwuerfe, merkliste }) {
+function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
     const navigate = useNavigate();
 
     // Styles
@@ -63,11 +63,15 @@ function MeinProfil({ currentUser, texts, entwuerfe, merkliste }) {
 
     // Entwürfe aus Profil- und Session-Prop zusammenführen
     const profileDrafts = Array.isArray(currentUser.entwuerfe) ? currentUser.entwuerfe : [];
-    const allDrafts = [...profileDrafts, ...entwuerfe];
+    const sessionDrafts = Array.isArray(entwuerfe) ? entwuerfe : [];
+    const allDrafts = [...profileDrafts, ...sessionDrafts];
 
-    // Merkliste (Lesezeichen)
-    const bookmarkedIds = new Set((merkliste || []).map(id => id.toString()));
-    const gemerkteTexte = texts.filter(t => bookmarkedIds.has(t.id.toString()));
+    // Merkliste IDs aus Profil und Session
+    const profileBookmarks = Array.isArray(currentUser.merkliste) ? currentUser.merkliste : [];
+    const sessionBookmarks = Array.isArray(merkliste) ? merkliste : [];
+    const allBookmarkIds = [...profileBookmarks, ...sessionBookmarks];
+    // Texte für Merkliste
+    const bookmarkedTexts = texts.filter(t => allBookmarkIds.includes(t.id));
 
     return (
         <div style={styles.container}>
@@ -119,8 +123,8 @@ function MeinProfil({ currentUser, texts, entwuerfe, merkliste }) {
                         {allDrafts.length > 0 ? allDrafts.map((draft, idx) => (
                             <div key={idx} style={styles.card}>
                                 <div style={styles.cardContent}>
-                                    <h4>{draft.titel || 'Unbenannter Entwurf'}</h4>
-                                    <p>{draft.vorschau || 'Keine Vorschau verfügbar'}</p>
+                                    <h4>{draft.ueberschrift || 'Unbenannter Entwurf'}</h4>
+                                    <p>{draft.kurzbeschreibung || 'Keine Vorschau verfügbar'}</p>
                                 </div>
                             </div>
                         )) : <p>Keine Entwürfe vorhanden.</p>}
@@ -135,7 +139,7 @@ function MeinProfil({ currentUser, texts, entwuerfe, merkliste }) {
                 <>
                     <h3 style={styles.sectionTitle}>Merkliste</h3>
                     <div style={styles.cardsContainer}>
-                        {gemerkteTexte.length > 0 ? gemerkteTexte.map(text => (
+                        {bookmarkedTexts.length > 0 ? bookmarkedTexts.map(text => (
                             <div
                                 key={text.id}
                                 style={styles.card}
@@ -176,7 +180,7 @@ function MeinProfil({ currentUser, texts, entwuerfe, merkliste }) {
                                     onClick={() => navigate(`/text/${text.id}`)}
                                 >
                                     {text.ueberschrift}
-                                </span>{' '}von <strong>{text.autor}</strong>:
+                                </span> von <strong>{text.autor}</strong>:
                             </p>
                             <p>"{kommentar.inhalt}"</p>
                         </div>
