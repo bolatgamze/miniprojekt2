@@ -8,22 +8,28 @@ import { useNavigate } from "react-router-dom";
   Funktionalität bleibt lokal (keine Merkliste in benutzern). Bildklick navigiert zur Detailseite.
 */
 
-function Home({ texts, setTexts, setBenutzern, benutzern }) {
+function Home({ texts, setTexts, benutzern, setBenutzern, currentUser, merkliste, setMerkliste }) {
     const [ausgewählteKategorie, setAusgewählteKategorie] = useState("Alle");
     const [ausgewählterAutor, setAusgewählterAutor] = useState("Alle");
     const [suchbegriff, setSuchbegriff] = useState("");
     const [sortOption, setSortOption] = useState("DatumNeu");
     const [seite, setSeite] = useState(1);
     // Lokaler State für Stern-Status pro Text-ID
-    const [starred, setStarred] = useState({});
 
     const navigate = useNavigate();
 
     const kategorien = ["Alle", "Fotografie", "Reflexion", "Gesundheit", "Abenteuer"];
     const autoren = ["Alle", "Loki", "Gandalf", "Simba", "Rufus"];
+    const istGemerkterText = (text) => {
+        return merkliste.includes(text);
+    };
 
-    const toggleStar = (id) => {
-        setStarred(prev => ({ ...prev, [id]: !prev[id] }));
+    const toggleMerken = (text) => {
+        if (istGemerkterText(text)) {
+            setMerkliste(merkliste.filter(t => t !== text));
+        } else {
+            setMerkliste([...merkliste, text]);
+        }
     };
 
     // Filter
@@ -91,11 +97,12 @@ function Home({ texts, setTexts, setBenutzern, benutzern }) {
                         <div style={headerBarStyle}>
                             <span>{new Date(t.datum).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
                             <span
-                                onClick={() => toggleStar(t.id)}
-                                style={starred[t.id] ? starFilledStyle : starEmptyStyle}
+                                onClick={() => toggleMerken(t)}
+                                style={istGemerkterText(t) ? starFilledStyle : starEmptyStyle}
+                                title="Zur Merkliste hinzufügen oder entfernen"
                             >
-                ★
-              </span>
+  ★
+</span>
                         </div>
                         {/* Bild klickbar zur Detailseite */}
                         <div onClick={() => navigate(`/text/${t.id}`)} style={imageWrapperStyle}>

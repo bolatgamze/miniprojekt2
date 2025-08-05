@@ -129,7 +129,7 @@ Also ja, ich bin ein Outdoor-Hund mit Indoor-Chill-Modus. Aber bitte – nicht o
 Euer naturverbundener Loki 🌲`,
         kategorie: "Reflexion",
         bild: "/images/image3.jpeg",
-        datum: "2025-10-14",
+        datum: "2025-08-01",
         daumenHoch: 29,
         daumenRunter: 1,
         autor: "Loki",
@@ -678,7 +678,8 @@ Rufus 🐾`,
                 inhalt: "So viel Energie! Und ich dachte, ich bin verrückt."
             }
         ]
-    }
+    },
+    {}
 
 ];
 export default texts;

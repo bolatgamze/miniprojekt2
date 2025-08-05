@@ -25,11 +25,12 @@ const pets = [
     {
         name: 'Simba',
         img: 'simbaa.PNG',
-        age: '',
-        species: 'Katze',
-        breed: '',
+        age: '2',
+        species: 'Kater',
+        breed: 'Britisch Kurzhaar',
         location: 'Münster',
-        story: ''
+        story: 'Simba ist der perfekte Lernbegleiter: Er sitzt gerne neben seinem Menschen beim Programmierkurs, beobachtet alles aufmerksam und scheint jedes Detail verstehen zu wollen.' +
+            'Neugier und Lernfreude machen ihn zu einem wahren Coding-Kater.'
     },
     {
         name: 'Rufus',
