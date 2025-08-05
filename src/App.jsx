@@ -184,6 +184,7 @@ function App() {
                     <MerkListe
                         merkliste={merkliste}
                         setMerkliste={setMerkliste}
+                        texts={texts}
                     />
                 } />
             </Routes>

@@ -21,15 +21,15 @@ function Home({ texts, setTexts, benutzern, setBenutzern, currentUser, merkliste
     const kategorien = ["Alle", "Fotografie", "Reflexion", "Gesundheit", "Abenteuer"];
     const autoren = ["Alle", "Loki", "Gandalf", "Simba", "Rufus"];
     const istGemerkterText = (text) => {
-        return merkliste.includes(text);
+        return merkliste.includes(text.id);
     };
 
     const toggleMerken = (e, text) => {
         e.stopPropagation()
         if (istGemerkterText(text)) {
-            setMerkliste(merkliste.filter(t => t !== text));
+            setMerkliste(merkliste.filter(id => id !== text.id));
         } else {
-            setMerkliste([...merkliste, text]);
+            setMerkliste([...merkliste, text.id]);
         }
     };
 

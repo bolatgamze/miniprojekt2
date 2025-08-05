@@ -4,7 +4,7 @@ für die zusammenheit wieder in Card Form texte in der Merkliste können wir hie
 titel, kurze beschreibung wie im homepage
  */
 
-function MerkListe({ merkliste, setMerkliste }) {
+function MerkListe({ merkliste, setMerkliste, texts }) {
     const handleEntfernen = (eintrag) => {
         setMerkliste(merkliste.filter(m => m !== eintrag));
     };
@@ -17,7 +17,10 @@ function MerkListe({ merkliste, setMerkliste }) {
                 <p>Du hast noch keine Texte gemerkt.</p>
             ) : (
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "24px" }}>
-                    {merkliste.map((t, index) => (
+                    {merkliste
+                        .map(id => texts.find(t => t.id === id))
+                        .filter(Boolean)
+                        .map((t, index) => (
                         <div key={index} style={cardStyle}>
                             <div style={headerStyle}>
                                 <span>{new Date(t.datum).toLocaleDateString('de-DE')}</span>
