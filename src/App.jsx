@@ -31,23 +31,7 @@ function App() {
         return saved ? JSON.parse(saved) : textData;
     });
 
-    const [currentUser, setCurrentUser] = useState({
-        benutzername: "Gandalf",
-        status: "admin",
-        email: "gandalf@katzenzauber.meow",
-        profilbild: "/profilbilder/gandalf.PNG",
-        typ: "Katze",
-        beigetretenAm: "2022-01-01",
-        zuletztOnline: "2025-08-03",
-        texte: [4, 5],
-        textKommentare: [
-            { textId: 2, inhalt: "Ich will das Foto sehen! 😹" },
-            { textId: 5, inhalt: "Punkt 3 ist revolutionär. Muss ich mal ausprobieren!" },
-            { textId: 11, inhalt: "Ich hab den Tierarzt gebissen. Keine Reue." },
-            { textId: 13, inhalt: "Ich wär sofort abgebogen bei dem Haufen Natur..." }
-        ],
-        merkliste: [1, 8]
-    });
+    const [currentUser, setCurrentUser] = useState("");
 
     const [entwuerfe, setEntwuerfe] = useState([]);
     const [merkliste, setMerkliste] = useState([]);
