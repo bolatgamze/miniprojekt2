@@ -1,51 +1,6 @@
 import React from 'react';
-/*
-für die zusammenheit wieder in Card Form texte in der Merkliste können wir hier kurz zeigen
-titel, kurze beschreibung wie im homepage
- */
 
-function MerkListe({ merkliste, setMerkliste }) {
-    const handleEntfernen = (eintrag) => {
-        setMerkliste(merkliste.filter(m => m !== eintrag));
-    };
-
-    return (
-        <div style={{ padding: "2rem" }}>
-            <h2 style={{ marginBottom: "1.5rem" }}>⭐ Gemerkte Texte</h2>
-
-            {merkliste.length === 0 ? (
-                <p>Du hast noch keine Texte gemerkt.</p>
-            ) : (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "24px" }}>
-                    {merkliste.map((t, index) => (
-                        <div key={index} style={cardStyle}>
-                            <div style={headerStyle}>
-                                <span>{new Date(t.datum).toLocaleDateString('de-DE')}</span>
-                                <button onClick={() => handleEntfernen(t)} style={starBtnStyle}>✖️</button>
-                            </div>
-
-                            <img src={t.bild} alt={t.ueberschrift} style={imageStyle} />
-
-                            <div style={contentStyle}>
-                                <h3>{t.ueberschrift}</h3>
-                                <p style={{ fontSize: "0.9rem" }}>{t.kurzbeschreibung}</p>
-                                <p style={{ marginTop: "0.5rem", fontStyle: "italic" }}>
-                                    {t.kategorie} – {t.autor}
-                                </p>
-                                <div style={voteStyle}>
-                                    <span>👍 {t.daumenHoch}</span>
-                                    <span>👎 {t.daumenRunter}</span>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-}
-
-// 🎨 Styles
+/* Styles */
 const cardStyle = {
     width: "260px",
     backgroundColor: "#fff",
@@ -86,5 +41,84 @@ const voteStyle = {
     marginTop: "0.5rem",
     fontSize: "1.1rem"
 };
+
+function MerkListe({ merkliste, setMerkliste, currentUser, texts }) {
+    const profileBookmarks = Array.isArray(currentUser.merkliste)
+        ? currentUser.merkliste
+        : [];
+
+    const sessionBookmarks = Array.isArray(merkliste)
+        ? merkliste.map(item =>
+            typeof item === "object" && item !== null
+                ? item.id
+                : item
+        )
+        : [];
+
+    const allBookmarkIds = Array.from(
+        new Set([...profileBookmarks, ...sessionBookmarks])
+    );
+
+    const bookmarkedTexts = texts.filter(t =>
+        allBookmarkIds.includes(t.id)
+    );
+
+    const handleEntfernen = (id) => {
+        setMerkliste(prev =>
+            prev
+                .map(item =>
+                    typeof item === "object" && item !== null ? item.id : item
+                )
+                .filter(tid => tid !== id)
+        );
+    };
+    return (
+        <div style={{ padding: "2rem" }}>
+            <h2 style={{ marginBottom: "1.5rem" }}>⭐ Gemerkte Texte</h2>
+
+            {bookmarkedTexts.length === 0 ? (
+                <p>Du hast noch keine Texte gemerkt.</p>
+            ) : (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "24px" }}>
+                    {bookmarkedTexts.map(text => (
+                        <div key={text.id} style={cardStyle}>
+                            <div style={headerStyle}>
+                                <span>{new Date(text.datum).toLocaleDateString('de-DE')}</span>
+                                <button
+                                    onClick={() => handleEntfernen(text.id)}
+                                    style={starBtnStyle}
+                                >
+                                    ✖️
+                                </button>
+                            </div>
+
+                            {text.bild && (
+                                <img
+                                    src={text.bild}
+                                    alt={text.ueberschrift}
+                                    style={imageStyle}
+                                />
+                            )}
+
+                            <div style={contentStyle}>
+                                <h3>{text.ueberschrift}</h3>
+                                <p style={{ fontSize: "0.9rem" }}>
+                                    {text.kurzbeschreibung}
+                                </p>
+                                <p style={{ marginTop: "0.5rem", fontStyle: "italic" }}>
+                                    {text.kategorie} – {text.autor}
+                                </p>
+                                <div style={voteStyle}>
+                                    <span>👍 {text.daumenHoch}</span>
+                                    <span>👎 {text.daumenRunter}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
 
 export default MerkListe;

@@ -20,16 +20,23 @@ function Home({ texts, setTexts, benutzern, setBenutzern, currentUser, merkliste
 
     const kategorien = ["Alle", "Fotografie", "Reflexion", "Gesundheit", "Abenteuer"];
     const autoren = ["Alle", "Loki", "Gandalf", "Simba", "Rufus"];
-    const istGemerkterText = (text) => {
-        return merkliste.includes(text);
+    const istGemerkterText = (id) => {
+        const sessionIDs = Array.isArray(merkliste) ? merkliste : [];
+
+        const profileIDs = Array.isArray(currentUser.merkliste) ? currentUser.merkliste : [];
+
+        return sessionIDs.includes(id) || profileIDs.includes(id);
+
     };
 
-    const toggleMerken = (e, text) => {
-        e.stopPropagation()
-        if (istGemerkterText(text)) {
-            setMerkliste(merkliste.filter(t => t !== text));
+    const toggleMerken = (e, id) => {
+
+        e.stopPropagation();
+
+        if (istGemerkterText(id)) {
+            setMerkliste(prev => prev.filter(tid => tid !== id));
         } else {
-            setMerkliste([...merkliste, text]);
+            setMerkliste(prev => [...prev, id]);
         }
     };
 
@@ -98,12 +105,12 @@ function Home({ texts, setTexts, benutzern, setBenutzern, currentUser, merkliste
                         <div style={headerBarStyle}>
                             <span>{new Date(t.datum).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
                             <span
-                                onClick={(e) => toggleMerken(e, t)}
-                                style={istGemerkterText(t) ? starFilledStyle : starEmptyStyle}
-                                title="Zur Merkliste hinzufügen oder entfernen"
+                                onClick={e => toggleMerken(e, t.id)}
+                                style={istGemerkterText(t.id) ? starFilledStyle : starEmptyStyle}
                             >
-                             ★
+                                ★
                             </span>
+
                         </div>
                         {/* Bild klickbar zur Detailseite */}
                         <div  style={imageWrapperStyle}>

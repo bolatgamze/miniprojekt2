@@ -1,26 +1,31 @@
 import React from 'react';
-
-//als admin kann man hier seine eigene entwürfe sehen und posten.
-// im Card Form kann man listen und an der rechten Ecke "posten" button wäre cool
 import { useNavigate } from "react-router-dom";
 
-function Entwuerfe({ entwuerfe, setEntwuerfe, texts, setTexts }) {
+function Entwuerfe({ entwuerfe, setEntwuerfe, texts, setTexts, currentUser }) {
     const navigate = useNavigate();
 
-    const handleLoeschen = (eintrag) => {
+    const profileDrafts = Array.isArray(currentUser.entwuerfe) ? currentUser.entwuerfe : [];
+    const sessionDrafts = Array.isArray(entwuerfe) ? entwuerfe : [];
+    const allDrafts = Array.from(
+        new Map(
+            [...profileDrafts, ...sessionDrafts].map(d => [d.id, d])
+        ).values()
+    );
+
+    const handleLoeschen = (entwurf) => {
         if (window.confirm("Möchtest du diesen Entwurf wirklich löschen?")) {
-            setEntwuerfe(entwuerfe.filter(e => e !== eintrag));
+            setEntwuerfe(prev => prev.filter(d => d.id !== entwurf.id));
         }
     };
 
-    const handleBearbeiten = (eintrag) => {
-        navigate("/neuerText", { state: { existingPost: eintrag } });
+    const handleBearbeiten = (entwurf) => {
+        navigate("/neuerText", { state: { existingPost: entwurf } });
     };
 
-    const handleVeroeffentlichen = (eintrag) => {
+    const handleVeroeffentlichen = (entwurf) => {
         if (window.confirm("Diesen Entwurf veröffentlichen?")) {
-            setTexts([...texts, eintrag]);
-            setEntwuerfe(entwuerfe.filter(e => e !== eintrag));
+            setTexts(prev => [...prev, entwurf]);
+            setEntwuerfe(prev => prev.filter(d => d.id !== entwurf.id));
         }
     };
 
@@ -28,14 +33,18 @@ function Entwuerfe({ entwuerfe, setEntwuerfe, texts, setTexts }) {
         <div style={{ padding: "2rem" }}>
             <h2>📄 Meine Entwürfe</h2>
 
-            {entwuerfe.length === 0 ? (
+            {allDrafts.length === 0 ? (
                 <p>Du hast noch keine Entwürfe gespeichert.</p>
             ) : (
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "24px" }}>
-                    {entwuerfe.map((e, index) => (
-                        <div key={index} style={cardStyle}>
+                    {allDrafts.map(e => (
+                        <div key={e.id} style={cardStyle}>
                             <div style={headerStyle}>
-                                <span>{e.datum ? new Date(e.datum).toLocaleDateString("de-DE") : "Kein Datum"}</span>
+                <span>
+                  {e.datum
+                      ? new Date(e.datum).toLocaleDateString("de-DE")
+                      : "Kein Datum"}
+                </span>
                             </div>
 
                             {e.bild && (
@@ -45,7 +54,9 @@ function Entwuerfe({ entwuerfe, setEntwuerfe, texts, setTexts }) {
                             <div style={contentStyle}>
                                 <h3>{e.ueberschrift || "Ohne Titel"}</h3>
                                 <p>{e.kurzbeschreibung || "Keine Kurzbeschreibung"}</p>
-                                <p style={{ fontStyle: "italic" }}>{e.kategorie} – {e.autor}</p>
+                                <p style={{ fontStyle: "italic" }}>
+                                    {e.kategorie} – {e.autor}
+                                </p>
 
                                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "1rem" }}>
                                     <button onClick={() => handleBearbeiten(e)}>📝 Bearbeiten</button>
@@ -60,6 +71,7 @@ function Entwuerfe({ entwuerfe, setEntwuerfe, texts, setTexts }) {
         </div>
     );
 }
+
 
 // Styles
 const cardStyle = {

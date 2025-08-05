@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 /**
  * NavBar-Komponente mit rollenbasiertem Zugriff und festgelegter Breite.
@@ -10,6 +10,12 @@ import { Link } from 'react-router-dom';
 function NavBar({ user, handleLogout }) {
     const role = user?.status || 'guest';
     const avatarUrl = user?.profilbild || '';
+    const navigate = useNavigate();
+
+    const onLogout = () => {
+        handleLogout();       // currentUser = null
+        navigate('/login');   // login sayfasına yönlendir
+    };
 
     return (
         <nav style={styles.navbar}>
@@ -27,7 +33,7 @@ function NavBar({ user, handleLogout }) {
                         </>
                     )}
 
-                    {role === 'user' || role === 'admin' && (
+                    {(role === 'user' || role === 'admin') && (
                         <Link to="/merkliste" className="navLink">Merkliste</Link>
                     )}
                 </div>
@@ -39,7 +45,17 @@ function NavBar({ user, handleLogout }) {
                             <Link to="/meinprofil" style={styles.profileLink}>
                                 <img src={avatarUrl} alt="Profilbild" style={styles.avatar} />
                             </Link>
-                            <Link to="/home" onClick={handleLogout} className="navLink" style={styles.logoutLink}>Logout</Link>
+                            <button
+                                onClick={onLogout}
+                                style={{
+                                    ...styles.logoutLink,
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Logout
+                            </button>
                         </>
                     ) : (
                         <Link to="/login" className="navLink" style={styles.logoutLink}>Login</Link>
