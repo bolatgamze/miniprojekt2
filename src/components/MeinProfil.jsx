@@ -73,6 +73,7 @@ function MeinProfil({ currentUser, texts = [], entwuerfe = [], merkliste }) {
     // Texte für Merkliste
     const bookmarkedTexts = texts.filter(t => allBookmarkIds.includes(t.id));
 
+
     return (
         <div style={styles.container}>
             {/* Profil Header */}
