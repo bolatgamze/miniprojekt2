@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 /**
  * NavBar-Komponente mit rollenbasiertem Zugriff und festgelegter Breite.
@@ -16,7 +16,7 @@ function NavBar({ user, handleLogout }) {
         handleLogout();       // currentUser = null
         navigate('/login');   // login sayfasına yönlendir
     };
-    
+
     return (
         <nav style={styles.navbar}>
             <div style={styles.container}>
@@ -45,17 +45,7 @@ function NavBar({ user, handleLogout }) {
                             <Link to="/meinprofil" style={styles.profileLink}>
                                 <img src={avatarUrl} alt="Profilbild" style={styles.avatar} />
                             </Link>
-                            <button
-                                onClick={onLogout}
-                                style={{
-                                    ...styles.logoutLink,
-                                    background: 'none',
-                                    border: 'none',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                Logout
-                            </button>
+                            <Link to="/home" onClick={handleLogout} className="navLink" style={styles.logoutLink}>Logout</Link>
                         </>
                     ) : (
                         <Link to="/login" className="navLink" style={styles.logoutLink}>Login</Link>
