@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function MeinProfil({
-                        benutzern,
-                        currentUser,
-                        texts,
-                        entwuerfe,
-                        merkliste
-                    }) {
+export default function MeinProfil({
+                                       benutzern,
+                                       currentUser,
+                                       texts,
+                                       entwuerfe,
+                                       merkliste
+                                   }) {
     const navigate = useNavigate();
 
     // Profil-Daten aus benutzern holen
@@ -69,11 +69,14 @@ function MeinProfil({
     let profileDrafts = [];
     if (profile.status === 'admin') {
         profileDrafts = Array.isArray(profile.entwuerfe)
+            // bereits Array
             ? profile.entwuerfe
-            : Object.values(profile.entwuerfe || {});
+            // Objekt mit IDs als Keys
+            : Object.entries(profile.entwuerfe || {}).map(
+                ([id, draft]) => ({ id: Number(id), ...draft })
+            );
     }
     const sessionDrafts = Array.isArray(entwuerfe) ? entwuerfe : [];
-    // Duplikate nach ID entfernen
     const allDrafts = Array.from(
         new Map(
             [...profileDrafts, ...sessionDrafts].map(d => [d.id, d])
@@ -86,17 +89,12 @@ function MeinProfil({
     const allBookmarkIds = Array.from(new Set([...profileBookmarks, ...sessionBookmarks]));
     const bookmarkedTexts = texts.filter(t => allBookmarkIds.includes(t.id));
 
-    // --- Alle meine Kommentare aus texts.collecten ---
-    const comments = texts
-        .flatMap(t =>
-            (t.kommentare || [])
-                .filter(k => k.autor === profile.benutzername)
-                .map(k => ({
-                    ...k,
-                    textId: t.id,
-                    textUeberschrift: t.ueberschrift
-                }))
-        );
+    // --- Kommentare aus allen Texten sammeln ---
+    const comments = texts.flatMap(t =>
+        (t.kommentare || [])
+            .filter(k => k.autor === profile.benutzername)
+            .map(k => ({ ...k, textId: t.id, textUeberschrift: t.ueberschrift }))
+    );
 
     return (
         <div style={styles.container}>
@@ -105,15 +103,9 @@ function MeinProfil({
                 <img src={profile.profilbild} alt={profile.benutzername} style={styles.profilBild} />
                 <div style={styles.userInfo}>
                     <h2>{profile.benutzername}</h2>
-                    <p>
-                        <strong>Anmeldedatum:</strong>{' '}
-                        {new Date(profile.beigetretenAm).toLocaleDateString('de-DE')}
-                    </p>
+                    <p><strong>Anmeldedatum:</strong> {new Date(profile.beigetretenAm).toLocaleDateString('de-DE')}</p>
                     <p><strong>Email:</strong> {profile.email}</p>
-                    <p>
-                        <strong>Zuletzt online:</strong>{' '}
-                        {new Date(profile.zuletztOnline).toLocaleDateString('de-DE')}
-                    </p>
+                    <p><strong>Zuletzt online:</strong> {new Date(profile.zuletztOnline).toLocaleDateString('de-DE')}</p>
                 </div>
             </div>
 
@@ -124,31 +116,26 @@ function MeinProfil({
                 <>
                     <h3 style={styles.sectionTitle}>Meine Texte</h3>
                     <div style={styles.cardsContainer}>
-                        {meineTexte.length > 0
-                            ? meineTexte.map(text => (
-                                <div
-                                    key={text.id}
-                                    style={styles.card}
-                                    onClick={() => navigate(`/text/${text.id}`)}
-                                >
-                                    <div style={styles.headerBar}>
-                                        {new Date(text.datum).toLocaleDateString('de-DE', {
-                                            day: '2-digit',
-                                            month: 'long',
-                                            year: 'numeric'
-                                        })}
-                                    </div>
-                                    <div style={styles.imageWrapper}>
-                                        <img src={text.bild} alt={text.ueberschrift} style={styles.image} />
-                                    </div>
-                                    <div style={styles.cardContent}>
-                                        <h4>{text.ueberschrift}</h4>
-                                        <p>{text.kurzbeschreibung}</p>
-                                    </div>
+                        {meineTexte.length > 0 ? meineTexte.map(text => (
+                            <div
+                                key={text.id}
+                                style={styles.card}
+                                onClick={() => navigate(`/text/${text.id}`)}
+                            >
+                                <div style={styles.headerBar}>
+                                    {new Date(text.datum).toLocaleDateString('de-DE', {
+                                        day: '2-digit', month: 'long', year: 'numeric'
+                                    })}
                                 </div>
-                            ))
-                            : <p>Keine eigenen Texte vorhanden.</p>
-                        }
+                                <div style={styles.imageWrapper}>
+                                    <img src={text.bild} alt={text.ueberschrift} style={styles.image} />
+                                </div>
+                                <div style={styles.cardContent}>
+                                    <h4>{text.ueberschrift}</h4>
+                                    <p>{text.kurzbeschreibung}</p>
+                                </div>
+                            </div>
+                        )) : <p>Keine eigenen Texte vorhanden.</p>}
                     </div>
 
                     <hr style={styles.hr} />
@@ -156,27 +143,28 @@ function MeinProfil({
                     {/* Entwürfe */}
                     <h3 style={styles.sectionTitle}>Entwürfe</h3>
                     <div style={styles.cardsContainer}>
-                        {allDrafts.length > 0
-                            ? allDrafts.map(d => (
-                                <div key={d.id} style={styles.card}>
-                                    <div style={styles.headerBar}>
-                                        {d.datum
-                                            ? new Date(d.datum).toLocaleDateString('de-DE')
-                                            : 'Kein Datum'}
-                                    </div>
-                                    {d.bild && (
-                                        <div style={styles.imageWrapper}>
-                                            <img src={d.bild} alt={d.ueberschrift} style={styles.image}/>
-                                        </div>
-                                    )}
-                                    <div style={styles.cardContent}>
-                                        <h4>{d.ueberschrift || 'Ohne Titel'}</h4>
-                                        <p>{d.kurzbeschreibung || 'Keine Kurzbeschreibung'}</p>
-                                    </div>
+                        {allDrafts.length > 0 ? allDrafts.map(d => (
+                            <div
+                                key={d.id}
+                                style={styles.card}
+                                onClick={() => navigate('/neuerText', { state: { existingPost: d } })}
+                            >
+                                <div style={styles.headerBar}>
+                                    {d.datum
+                                        ? new Date(d.datum).toLocaleDateString('de-DE')
+                                        : 'Kein Datum'}
                                 </div>
-                            ))
-                            : <p>Keine Entwürfe vorhanden.</p>
-                        }
+                                {d.bild && (
+                                    <div style={styles.imageWrapper}>
+                                        <img src={d.bild} alt={d.ueberschrift} style={styles.image} />
+                                    </div>
+                                )}
+                                <div style={styles.cardContent}>
+                                    <h4>{d.ueberschrift || 'Ohne Titel'}</h4>
+                                    <p>{d.kurzbeschreibung || 'Keine Kurzbeschreibung'}</p>
+                                </div>
+                            </div>
+                        )) : <p>Keine Entwürfe vorhanden.</p>}
                     </div>
 
                     <hr style={styles.hr} />
@@ -184,35 +172,30 @@ function MeinProfil({
             )}
 
             {/* Merkliste */}
-            {['admin', 'user'].includes(profile.status) && (
+            {['admin','user'].includes(profile.status) && (
                 <>
                     <h3 style={styles.sectionTitle}>Merkliste</h3>
                     <div style={styles.cardsContainer}>
-                        {bookmarkedTexts.length > 0
-                            ? bookmarkedTexts.map(text => (
-                                <div
-                                    key={text.id}
-                                    style={styles.card}
-                                    onClick={() => navigate(`/text/${text.id}`)}
-                                >
-                                    <div style={styles.headerBar}>
-                                        {new Date(text.datum).toLocaleDateString('de-DE', {
-                                            day: '2-digit',
-                                            month: 'long',
-                                            year: 'numeric'
-                                        })}
-                                    </div>
-                                    <div style={styles.imageWrapper}>
-                                        <img src={text.bild} alt={text.ueberschrift} style={styles.image}/>
-                                    </div>
-                                    <div style={styles.cardContent}>
-                                        <h4>{text.ueberschrift}</h4>
-                                        <p>{text.kurzbeschreibung}</p>
-                                    </div>
+                        {bookmarkedTexts.length > 0 ? bookmarkedTexts.map(text => (
+                            <div
+                                key={text.id}
+                                style={styles.card}
+                                onClick={() => navigate(`/text/${text.id}`)}
+                            >
+                                <div style={styles.headerBar}>
+                                    {new Date(text.datum).toLocaleDateString('de-DE', {
+                                        day: '2-digit', month: 'long', year: 'numeric'
+                                    })}
                                 </div>
-                            ))
-                            : <p>Keine Einträge in der Merkliste.</p>
-                        }
+                                <div style={styles.imageWrapper}>
+                                    <img src={text.bild} alt={text.ueberschrift} style={styles.image} />
+                                </div>
+                                <div style={styles.cardContent}>
+                                    <h4>{text.ueberschrift}</h4>
+                                    <p>{text.kurzbeschreibung}</p>
+                                </div>
+                            </div>
+                        )) : <p>Keine Einträge in der Merkliste.</p>}
                     </div>
 
                     <hr style={styles.hr} />
@@ -222,22 +205,22 @@ function MeinProfil({
             {/* Kommentare */}
             <h3 style={styles.sectionTitle}>Kommentare</h3>
             <div>
-                {comments.map((kommentar, idx) => {
-                    const text = texts.find(t => t.id === kommentar.textId);
-                    if (!text) return null;
+                {comments.map((k, idx) => {
+                    const t = texts.find(t => t.id === k.textId);
+                    if (!t) return null;
                     return (
                         <div key={idx} style={styles.commentCard}>
                             <p>
                                 Kommentar zu{' '}
                                 <span
                                     style={styles.commentLink}
-                                    onClick={() => navigate(`/text/${text.id}`)}
+                                    onClick={() => navigate(`/text/${t.id}`)}
                                 >
-                  {text.ueberschrift}
+                  {t.ueberschrift}
                 </span>{' '}
-                                von <strong>{text.autor}</strong>:
+                                von <strong>{t.autor}</strong>:
                             </p>
-                            <p>"{kommentar.inhalt}"</p>
+                            <p>"{k.inhalt}"</p>
                         </div>
                     );
                 })}
@@ -245,5 +228,3 @@ function MeinProfil({
         </div>
     );
 }
-
-export default MeinProfil;
