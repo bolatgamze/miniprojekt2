@@ -16,9 +16,7 @@ function NavBar({ user, handleLogout }) {
         handleLogout();       // currentUser = null
         navigate('/login');   // login sayfasına yönlendir
     };
-
-    console.log(user.benutzername)
-
+    
     return (
         <nav style={styles.navbar}>
             <div style={styles.container}>
