@@ -31,8 +31,9 @@ function App() {
         return saved ? JSON.parse(saved) : textData;
     });
 
-    const [currentUser, setCurrentUser] = useState({
+    const [currentUser, setCurrentUser]  = useState( {
         benutzername: "Gandalf",
+        password: "gandalf",
         status: "admin",
         email: "gandalf@katzenzauber.meow",
         profilbild: "/profilbilder/gandalf.PNG",
@@ -41,8 +42,8 @@ function App() {
         zuletztOnline: "2025-08-03",
         texte: [4, 5],
         textKommentare: [
-            { textId: 2, inhalt: "Ich will das Foto sehen! 😹" },
-            { textId: 5, inhalt: "Punkt 3 ist revolutionär. Muss ich mal ausprobieren!" },
+            { textId: 2,  inhalt: "Ich will das Foto sehen! 😹" },
+            { textId: 5,  inhalt: "Punkt 3 ist revolutionär. Muss ich mal ausprobieren!" },
             { textId: 11, inhalt: "Ich hab den Tierarzt gebissen. Keine Reue." },
             { textId: 13, inhalt: "Ich wär sofort abgebogen bei dem Haufen Natur..." }
         ],
@@ -157,7 +158,6 @@ Schlafen ist der wahre Lifestyle. Wer’s noch nicht probiert hat, verpasst was!
                         <Login
                             benutzern={benutzern}
                             setCurrentUser={setCurrentUser}
-                            currentUser={currentUser}
                         />
                     }
                 />
@@ -192,13 +192,15 @@ Schlafen ist der wahre Lifestyle. Wer’s noch nicht probiert hat, verpasst was!
                     }
                 />
                 <Route
-                    path="/neuerText"
-                    element={
-                        <NeuerText
-                            onSave={(text) => setEntwuerfe([...entwuerfe, text])}
-                            currentUser={currentUser}
-                        />
-                    }
+                path="/neuerText"
+                element={
+                    <NeuerText onSave={(text) => {
+                        setEntwuerfe(prev => [...prev, text]);
+                    }}
+                currentUser={currentUser}
+                setCurrentUser={setCurrentUser}
+                />
+                }
                 />
                 <Route
                     path="/entwuerfe"
@@ -208,6 +210,8 @@ Schlafen ist der wahre Lifestyle. Wer’s noch nicht probiert hat, verpasst was!
                             setEntwuerfe={setEntwuerfe}
                             texts={texts}
                             setTexts={setTexts}
+                            currentUser={currentUser}
+
                         />
                     }
                 />
@@ -217,6 +221,8 @@ Schlafen ist der wahre Lifestyle. Wer’s noch nicht probiert hat, verpasst was!
                         <MerkListe
                             merkliste={merkliste}
                             setMerkliste={setMerkliste}
+                            currentUser={currentUser}
+                            texts={texts}
                         />
                     }
                 />
