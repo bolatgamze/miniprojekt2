@@ -186,18 +186,20 @@ function NeuerText({ onSave, onPublish }) {
                 </select>
 
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem' }}>
-                    {!existingPost ? (
+                    {existingPost ? (
+                        <>
+                            <button type="button" onClick={handleSave}>💾 Änderungen speichern</button>
+                            <button type="button" onClick={handlePublish}>🚀 Veröffentlichen</button>
+                            <button type="button" onClick={handleCancel}>❌ Abbrechen</button>
+                        </>
+                    ) : (
                         <>
                             <button type="button" onClick={handleSave}>💾 Als Entwurf speichern</button>
                             <button type="button" onClick={handlePublish}>🚀 Veröffentlichen</button>
                         </>
-                    ) : (
-                        <>
-                            <button type="button" onClick={handlePublish}>✅ Änderungen speichern</button>
-                            <button type="button" onClick={handleCancel}>❌ Abbrechen</button>
-                        </>
                     )}
                 </div>
+
 
             </form>
         </div>

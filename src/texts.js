@@ -678,7 +678,57 @@ Rufus 🐾`,
                 inhalt: "So viel Energie! Und ich dachte, ich bin verrückt."
             }
         ]
-    }
+    },
+    {
+        id: 14,
+        ueberschrift: "Simba & der Programmierkurs 👨‍💻🐾",
+        kurzbeschreibung: "Wenn der Mensch programmiert, hält Simba Wache – oder schläft.",
+        text: `Ich bin Simba.  
+Und ich bin der heimliche Mentor meines Menschen im Programmierkurs.
+
+💻 Während er über Code grübelt, beobachte ich jede Zeile.  
+Ob JavaScript oder Python – ich bin immer da.  
+Ganz ruhig. Ganz nah.
+
+⌨️ Wenn die Aufgabe knifflig ist, spüre ich das.  
+Ich lege mich neben die Tastatur. Mein Kopf auf dem Tisch, meine Augen halb geschlossen – aber ich bin wach.  
+Fast.
+
+😴 Irgendwann schlafe ich ein. Immer.  
+Aber erst, wenn mein Mensch richtig tief in der Aufgabe steckt.  
+Ich träume von Variablen, Schleifen, Leckerlis und Debugging.
+
+🧠 Manche sagen, ich verstehe nichts vom Programmieren.  
+Aber weißt du was? Ich verstehe Geduld.  
+Und Unterstützung.  
+Und wie wichtig es ist, einfach da zu sein.
+
+Wir sind ein Team.  
+Er tippt. Ich döse.  
+Und wenn er fertig ist, feiern wir – mit einem Snack. Für ihn. Und für mich.
+
+Dein Coding-Buddy  
+Simba 🐱`,
+        kategorie: "Alltag",
+        bild: "/images/photo_2025-08-05_08-36-00.jpg", // bitte Bild entsprechend umbenennen/speichern
+        datum: "2025-08-06",
+        daumenHoch: 58,
+        daumenRunter: 1,
+        autor: "Simba",
+        kommentare: [
+            {
+                id: 1,
+                autor: "Rufus",
+                inhalt: "Du bist ein echter Support-Partner. Respekt!"
+            },
+            {
+                id: 2,
+                autor: "Bella",
+                inhalt: "Ich will auch einen Simba beim Lernen!"
+            }
+        ]
+    },
+
 
 ];
 export default texts;
