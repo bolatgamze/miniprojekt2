@@ -687,7 +687,7 @@ Rufus 🐾`,
 Und ich bin der heimliche Mentor meines Menschen im Programmierkurs.
 
 💻 Während er über Code grübelt, beobachte ich jede Zeile.  
-Ob JavaScript oder Python – ich bin immer da.  
+Ob JavaScript oder Java – ich bin immer da.  
 Ganz ruhig. Ganz nah.
 
 ⌨️ Wenn die Aufgabe knifflig ist, spüre ich das.  
