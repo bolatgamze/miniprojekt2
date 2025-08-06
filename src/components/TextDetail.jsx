@@ -103,7 +103,6 @@ function TextDetail({ texts, setTexts, benutzern, setBenutzern, currentUser, set
                     style={{
                         width: "100%",
                         maxWidth: "500px",
-                        height: "300px",
                         objectFit: "cover",
                         borderRadius: "12px",
                     }}
