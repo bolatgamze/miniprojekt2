@@ -6,7 +6,7 @@ function Footer() {
         <footer style={styles.footer}>
             <div style={styles.logoSection}>
                 <FaCat style={styles.iconCat} />
-                <span style={styles.text}>Katzen & Hunde Blog</span>
+                <span style={styles.text}>Vier Pfoten Blog</span>
                 <FaDog style={styles.iconDog} />
             </div>
             <div style={styles.info}>
