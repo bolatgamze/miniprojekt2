@@ -881,7 +881,21 @@ Schlafen ist der wahre Lifestyle. Wer’s noch nicht probiert hat, verpasst was!
     zuletztOnline: "2025-08-03T11:57:00",
     textKommentare: [],
     merkliste: [3, 7, 8]
-  }
+  },
+  {
+    benutzername: "Lars",
+    password: "lars",
+      status: "user",
+      email: "lars@fischundkatze.de",
+      profilbild: "/profilbilder/lars.PNG",
+      typ: "Katze/Goldfisch",
+      beigetretenAm: "2022-01-01",
+      zuletztOnline: "2025-08-06T12:00:00",
+      texte: [],
+      textKommentare: [],
+      entwuerfe: {},
+      merkliste: []
+    }
 ];
 
 export default users;

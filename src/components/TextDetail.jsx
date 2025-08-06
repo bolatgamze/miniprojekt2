@@ -30,6 +30,19 @@ function TextDetail({ texts, setTexts, benutzern, setBenutzern, currentUser, set
                 : t
         );
         setTexts(updatedTexts);
+        const neuerUserKommentar = { textId: text.id, inhalt: neuerKommentar };
+        const updatedCurrent = {
+            ...currentUser,
+            textKommentare: [...(currentUser.textKommentare || []), neuerUserKommentar]
+        };
+          setCurrentUser(updatedCurrent);
+          setBenutzern(prev =>
+              prev.map(u =>
+                  u.benutzername === updatedCurrent.benutzername
+                      ? { ...u, textKommentare: updatedCurrent.textKommentare }
+                      : u
+              )
+          );
         setNeuerAutor("");
         setNeuerKommentar("");
     };

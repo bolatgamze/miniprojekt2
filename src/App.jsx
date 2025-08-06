@@ -170,6 +170,7 @@ Schlafen ist der wahre Lifestyle. Wer’s noch nicht probiert hat, verpasst was!
                         <Register
                             benutzern={benutzern}
                             setBenutzern={setBenutzern}
+                            setCurrentUser={setCurrentUser}
                         />
                     }
                 />
