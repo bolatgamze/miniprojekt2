@@ -1,8 +1,9 @@
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import { useState } from "react";
 
-function TextDetail({ texts, setTexts, benutzern }) {
+function TextDetail({ texts, setTexts, benutzern, setBenutzern, currentUser, setCurrentUser }) {
     const { id } = useParams();
+    const navigate = useNavigate();
     const text = texts.find((t) => t.id === parseInt(id));
 
     const [neuerAutor, setNeuerAutor] = useState("");
@@ -60,6 +61,25 @@ function TextDetail({ texts, setTexts, benutzern }) {
         setTexts(updatedTexts);
     };
 
+    const handleTextLoeschen = () => {
+        setTexts(prev => prev.filter(t => t.id !== text.id));
+        setBenutzern(prev =>
+                    prev.map(u =>
+                        u.benutzername === text.autor && Array.isArray(u.texte)
+                            ? { ...u, texte: u.texte.filter(tid => tid !== text.id) }
+                            : u
+                    )
+                );
+        if (currentUser?.texte) {
+            setCurrentUser({
+                ...currentUser,
+                texte: currentUser.texte.filter(tid => tid !== text.id)
+            });
+        }
+
+        navigate("/home");
+    };
+
     return (
         <div style={{ padding: "40px 20px 30px", maxWidth: "800px", margin: "0 auto" }}>
             {/* Bild */}
@@ -111,6 +131,25 @@ function TextDetail({ texts, setTexts, benutzern }) {
                         👎 <span style={{ fontWeight: "bold" }}>{text.daumenRunter}</span>
                     </span>
                 </div>
+
+                {currentUser?.status === "admin" && (
+                    <div style={{ marginTop: "30px", textAlign: "right" }}>
+                        <button
+                            onClick={handleTextLoeschen}
+                            style={{
+                                padding: "10px 16px",
+                                borderRadius: "8px",
+                                backgroundColor: "#e63946",
+                                border: "none",
+                                color: "#fff",
+                                cursor: "pointer",
+                                fontSize: "14px"
+                            }}
+                        >
+                            Text löschen
+                        </button>
+                    </div>
+                )}
             </div>
 
             <hr style={{ margin: "30px 0" }} />
@@ -153,23 +192,25 @@ function TextDetail({ texts, setTexts, benutzern }) {
                                     <strong>{k.autor}</strong>
                                     <p style={{ margin: "4px 0 0 0" }}>{k.inhalt}</p>
                                 </div>
-                                <button
-                                    onClick={() => handleKommentarLoeschen(k.id)}
-                                    style={{
-                                        position: "absolute",
-                                        bottom: "8px",
-                                        right: "8px",
-                                        backgroundColor: "#e63946",
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "4px",
-                                        padding: "4px 8px",
-                                        cursor: "pointer",
-                                        fontSize: "12px"
-                                    }}
-                                >
-                                    Löschen
-                                </button>
+                                {currentUser?.status === "admin" && (
+                                    <button
+                                        onClick={() => handleKommentarLoeschen(k.id)}
+                                        style={{
+                                            position: "absolute",
+                                            bottom: "8px",
+                                            right: "8px",
+                                            backgroundColor: "#e63946",
+                                            color: "#fff",
+                                            border: "none",
+                                            borderRadius: "4px",
+                                            padding: "4px 8px",
+                                            cursor: "pointer",
+                                            fontSize: "12px"
+                                        }}
+                                    >
+                                        Löschen
+                                    </button>
+                                )}
                             </div>
                         );
                     })

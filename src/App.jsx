@@ -148,6 +148,9 @@ Schlafen ist der wahre Lifestyle. Wer’s noch nicht probiert hat, verpasst was!
                             texts={texts}
                             setTexts={setTexts}
                             benutzern={benutzern}
+                            setBenutzern={setBenutzern}
+                            currentUser={currentUser}
+                            setCurrentUser={setCurrentUser}
                         />
                     }
                 />
@@ -184,9 +187,13 @@ Schlafen ist der wahre Lifestyle. Wer’s noch nicht probiert hat, verpasst was!
                     element={
                         <MeinProfil
                             benutzern={benutzern}
+                            setBenutzern={setBenutzern}
                             currentUser={currentUser}
+                            setCurrentUser={setCurrentUser}
                             entwuerfe={entwuerfe}
+                            setEntwuerfe={setEntwuerfe}
                             merkliste={merkliste}
+                            setMerkliste={setMerkliste}
                             texts={texts}
                         />
                     }
