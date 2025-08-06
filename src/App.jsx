@@ -192,16 +192,27 @@ Schlafen ist der wahre Lifestyle. Wer’s noch nicht probiert hat, verpasst was!
                     }
                 />
                 <Route
-                path="/neuerText"
-                element={
-                    <NeuerText onSave={(text) => {
-                        setEntwuerfe(prev => [...prev, text]);
-                    }}
-                currentUser={currentUser}
-                setCurrentUser={setCurrentUser}
+                    path="/neuerText"
+                    element={
+                        <NeuerText
+                            currentUser={currentUser}
+                            setCurrentUser={setCurrentUser}
+                            onSave={(entwurf) => {
+                                // Speichert neuen oder geänderten Entwurf
+                                setEntwuerfe(prev => {
+                                    const ohneAlten = prev.filter(t => t.id !== entwurf.id);
+                                    return [...ohneAlten, entwurf];
+                                });
+                            }}
+                            onPublish={(post) => {
+                                // Veröffentlicht den Beitrag und entfernt ihn aus den Entwürfen
+                                setTexts(prev => [...prev, post]);
+                                setEntwuerfe(prev => prev.filter(t => t.id !== post.id));
+                            }}
+                        />
+                    }
                 />
-                }
-                />
+
                 <Route
                     path="/entwuerfe"
                     element={

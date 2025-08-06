@@ -10,8 +10,6 @@ import { Link } from 'react-router-dom';
 function NavBar({ user, handleLogout }) {
     const role = user?.status || 'guest';
     const avatarUrl = user?.profilbild || '';
-
-
     return (
         <nav style={styles.navbar}>
             <div style={styles.container}>
