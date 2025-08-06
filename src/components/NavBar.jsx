@@ -11,8 +11,6 @@ function NavBar({ user, handleLogout }) {
     const role = user?.status || 'guest';
     const avatarUrl = user?.profilbild || '';
 
-    console.log(user.benutzername)
-
     return (
         <nav style={styles.navbar}>
             <div style={styles.container}>
