@@ -68,7 +68,7 @@ function Home({ texts, setTexts, benutzern, setBenutzern, currentUser, merkliste
     const aktuelleTexte = gefilterteTexte.slice(startIndex, startIndex + itemsPerPage);
 
     return (
-        <div style={{ padding: "20px", color: "#1a1a1a" }}>
+        <div style={{ padding: "20px", color: "#1a1a1a",width: '1200px' }}>
             {/* Filterleiste */}
             <div style={filterBarStyle}>
                 <input

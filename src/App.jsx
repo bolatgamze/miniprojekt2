@@ -62,140 +62,139 @@ function App() {
         localStorage.setItem("users", JSON.stringify(benutzern));
     }, [benutzern]);
 
-    const handleSaveNewText = (text) => {
-        setTexts([...texts, text]);
-    };
-
     const handleLogout = () => {
         setCurrentUser(null);
     }
 
     return (
-        <>
+        <div >
             <Header />
             <NavBar user={currentUser} handleLogout={handleLogout} />
 
-            <Routes>
-                <Route path="/home" element={
-                    <Home
-                        texts={texts}
-                        setTexts={setTexts}
-                        benutzern={benutzern}
-                        setBenutzern={setBenutzern}
-                        currentUser={currentUser}
-                        merkliste={merkliste}
-                        setMerkliste={setMerkliste}
+            <div >
+                <Routes>
+                    <Route path="/home" element={
+                        <Home
+                            texts={texts}
+                            setTexts={setTexts}
+                            benutzern={benutzern}
+                            setBenutzern={setBenutzern}
+                            currentUser={currentUser}
+                            merkliste={merkliste}
+                            setMerkliste={setMerkliste}
+                        />
+                    } />
+
+                    <Route
+                        path="/text/:id"
+                        element={
+                            <TextDetail
+                                texts={texts}
+                                setTexts={setTexts}
+                                benutzern={benutzern}
+                                setBenutzern={setBenutzern}
+                                currentUser={currentUser}
+                                setCurrentUser={setCurrentUser}
+                            />
+                        }
                     />
-                } />
+                    <Route path="/" element={<About />} />
+                    <Route
+                        path="/login"
+                        element={
+                            <Login
+                                benutzern={benutzern}
+                                setBenutzern={setBenutzern}
+                                setCurrentUser={setCurrentUser}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/register"
+                        element={
+                            <Register
+                                benutzern={benutzern}
+                                setBenutzern={setBenutzern}
+                                setCurrentUser={setCurrentUser}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/admin"
+                        element={
+                            <AdminPanel
+                                benutzern={benutzern}
+                                setBenutzern={setBenutzern}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/meinprofil"
+                        element={
+                            <MeinProfil
+                                benutzern={benutzern}
+                                setBenutzern={setBenutzern}
+                                currentUser={currentUser}
+                                setCurrentUser={setCurrentUser}
+                                entwuerfe={entwuerfe}
+                                setEntwuerfe={setEntwuerfe}
+                                merkliste={merkliste}
+                                setMerkliste={setMerkliste}
+                                texts={texts}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/neuerText"
+                        element={
+                            <NeuerText
+                                currentUser={currentUser}
+                                setCurrentUser={setCurrentUser}
+                                onSave={(entwurf) => {
+                                    // Speichert neuen oder geänderten Entwurf
+                                    setEntwuerfe(prev => {
+                                        const ohneAlten = prev.filter(t => t.id !== entwurf.id);
+                                        return [...ohneAlten, entwurf];
+                                    });
+                                }}
+                                onPublish={(post) => {
+                                    // Veröffentlicht den Beitrag und entfernt ihn aus den Entwürfen
+                                    setTexts(prev => [...prev, post]);
+                                    setEntwuerfe(prev => prev.filter(t => t.id !== post.id));
+                                }}
+                            />
+                        }
+                    />
 
-                <Route
-                    path="/text/:id"
-                    element={
-                        <TextDetail
-                            texts={texts}
-                            setTexts={setTexts}
-                            benutzern={benutzern}
-                            setBenutzern={setBenutzern}
-                            currentUser={currentUser}
-                            setCurrentUser={setCurrentUser}
-                        />
-                    }
-                />
-                <Route path="/" element={<About />} />
-                <Route
-                    path="/login"
-                    element={
-                        <Login
-                            benutzern={benutzern}
-                            setBenutzern={setBenutzern}
-                            setCurrentUser={setCurrentUser}
-                        />
-                    }
-                />
-                <Route
-                    path="/register"
-                    element={
-                        <Register
-                            benutzern={benutzern}
-                            setBenutzern={setBenutzern}
-                            setCurrentUser={setCurrentUser}
-                        />
-                    }
-                />
-                <Route
-                    path="/admin"
-                    element={
-                        <AdminPanel
-                            benutzern={benutzern}
-                            setBenutzern={setBenutzern}
-                        />
-                    }
-                />
-                <Route
-                    path="/meinprofil"
-                    element={
-                        <MeinProfil
-                            benutzern={benutzern}
-                            setBenutzern={setBenutzern}
-                            currentUser={currentUser}
-                            setCurrentUser={setCurrentUser}
-                            entwuerfe={entwuerfe}
-                            setEntwuerfe={setEntwuerfe}
-                            merkliste={merkliste}
-                            setMerkliste={setMerkliste}
-                            texts={texts}
-                        />
-                    }
-                />
-                <Route
-                    path="/neuerText"
-                    element={
-                        <NeuerText
-                            currentUser={currentUser}
-                            setCurrentUser={setCurrentUser}
-                            onSave={(entwurf) => {
-                                // Speichert neuen oder geänderten Entwurf
-                                setEntwuerfe(prev => {
-                                    const ohneAlten = prev.filter(t => t.id !== entwurf.id);
-                                    return [...ohneAlten, entwurf];
-                                });
-                            }}
-                            onPublish={(post) => {
-                                // Veröffentlicht den Beitrag und entfernt ihn aus den Entwürfen
-                                setTexts(prev => [...prev, post]);
-                                setEntwuerfe(prev => prev.filter(t => t.id !== post.id));
-                            }}
-                        />
-                    }
-                />
+                    <Route
+                        path="/entwuerfe"
+                        element={
+                            <Entwuerfe
+                                entwuerfe={entwuerfe}
+                                setEntwuerfe={setEntwuerfe}
+                                texts={texts}
+                                setTexts={setTexts}
+                                currentUser={currentUser}
 
-                <Route
-                    path="/entwuerfe"
-                    element={
-                        <Entwuerfe
-                            entwuerfe={entwuerfe}
-                            setEntwuerfe={setEntwuerfe}
-                            texts={texts}
-                            setTexts={setTexts}
-                            currentUser={currentUser}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/merkliste"
+                        element={
+                            <MerkListe
+                                merkliste={merkliste}
+                                setMerkliste={setMerkliste}
+                                currentUser={currentUser}
+                                texts={texts}
+                            />
+                        }
+                    />
+                </Routes>
+            </div>
 
-                        />
-                    }
-                />
-                <Route
-                    path="/merkliste"
-                    element={
-                        <MerkListe
-                            merkliste={merkliste}
-                            setMerkliste={setMerkliste}
-                            currentUser={currentUser}
-                            texts={texts}
-                        />
-                    }
-                />
-            </Routes>
             <Footer />
-        </>
+        </div>
     );
 }
 

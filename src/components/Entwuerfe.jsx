@@ -1,49 +1,31 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-export default function Entwuerfe({
-                                      entwuerfe,
-                                      setEntwuerfe,
-                                      texts,
-                                      setTexts,
-                                      currentUser
-                                  }) {
+function Entwuerfe({ entwuerfe, setEntwuerfe, texts, setTexts, currentUser }) {
     const navigate = useNavigate();
 
-    // 1) Aus Profil-Entwürfen: entweder Array oder Objekt mit ID-Keys
-    const profileDrafts = Array.isArray(currentUser.entwuerfe)
-        ? currentUser.entwuerfe
-        : Object.entries(currentUser.entwuerfe || {}).map(
-            ([key, draft]) => ({ id: Number(key), ...draft })
-        );
-
-    // 2) Session-Entwürfe (immer Array)
+    const profileDrafts = Array.isArray(currentUser.entwuerfe) ? currentUser.entwuerfe : [];
     const sessionDrafts = Array.isArray(entwuerfe) ? entwuerfe : [];
-
-    // Zusammenführen und nach id deduplizieren
     const allDrafts = Array.from(
         new Map(
             [...profileDrafts, ...sessionDrafts].map(d => [d.id, d])
         ).values()
     );
 
-    const deleteDraft = (e, d) => {
-        e.stopPropagation();
-        if (window.confirm('Diesen Entwurf wirklich löschen?')) {
-            setEntwuerfe(prev => prev.filter(x => x.id !== d.id));
+    const handleLoeschen = (entwurf) => {
+        if (window.confirm("Möchtest du diesen Entwurf wirklich löschen?")) {
+            setEntwuerfe(prev => prev.filter(d => d.id !== entwurf.id));
         }
     };
 
-    const editDraft = (e, d) => {
-        e.stopPropagation();
-        navigate('/neuerText', { state: { existingPost: d } });
+    const handleBearbeiten = (entwurf) => {
+        navigate("/neuerText", { state: { existingPost: entwurf } });
     };
 
-    const publishDraft = (e, d) => {
-        e.stopPropagation();
-        if (window.confirm('Diesen Entwurf veröffentlichen?')) {
-            setTexts(prev => [...prev, d]);
-            setEntwuerfe(prev => prev.filter(x => x.id !== d.id));
+    const handleVeroeffentlichen = (entwurf) => {
+        if (window.confirm("Diesen Entwurf veröffentlichen?")) {
+            setTexts(prev => [...prev, entwurf]);
+            setEntwuerfe(prev => prev.filter(d => d.id !== entwurf.id));
         }
     };
 
@@ -79,53 +61,34 @@ export default function Entwuerfe({
             <h2 style={{ marginBottom: '1.2rem', fontSize: '1.8rem' }}>Meine Entwürfe</h2>
 
             {allDrafts.length === 0 ? (
-                <p style={{
-                    color: '#666',
-                    fontStyle: 'italic',
-                    textAlign: 'center',
-                    fontSize: '1rem'
-                }}>
-                    Du hast noch keine Entwürfe.
-                </p>
+                <p>Du hast noch keine Entwürfe gespeichert.</p>
             ) : (
-                <div className="draft-grid">
-                    {allDrafts.map(d => (
-                        <div
-                            key={d.id}
-                            className="draft-card"
-                            onClick={e => editDraft(e, d)}
-                        >
-                            <div className="draft-header">
-                                {d.datum
-                                    ? new Date(d.datum).toLocaleDateString('de-DE')
-                                    : 'Kein Datum'}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "24px" }}>
+                    {allDrafts.map(e => (
+                        <div key={e.id} style={cardStyle}>
+                            <div style={headerStyle}>
+                <span>
+                  {e.datum
+                      ? new Date(e.datum).toLocaleDateString("de-DE")
+                      : "Kein Datum"}
+                </span>
                             </div>
-                            {d.bild && (
-                                <img
-                                    src={d.bild}
-                                    alt={d.ueberschrift}
-                                    className="draft-image"
-                                />
+
+                            {e.bild && (
+                                <img src={e.bild} alt={e.ueberschrift} style={imageStyle} />
                             )}
-                            <div className="draft-content">
-                                <h3>{d.ueberschrift || 'Ohne Titel'}</h3>
-                                <p>{d.kurzbeschreibung || 'Keine Kurzbeschreibung'}</p>
-                                <div className="draft-meta">
-                                    {d.kategorie} – {d.autor}
-                                </div>
-                                <div className="draft-btns">
-                                    <button className="draft-btn" onClick={e => editDraft(e, d)}>
-                                        Bearbeiten
-                                    </button>
-                                    <button className="draft-btn" onClick={e => publishDraft(e, d)}>
-                                        Veröffentlichen
-                                    </button>
-                                    <button
-                                        className="draft-btn danger"
-                                        onClick={e => deleteDraft(e, d)}
-                                    >
-                                        Löschen
-                                    </button>
+
+                            <div style={contentStyle}>
+                                <h3>{e.ueberschrift || "Ohne Titel"}</h3>
+                                <p>{e.kurzbeschreibung || "Keine Kurzbeschreibung"}</p>
+                                <p style={{ fontStyle: "italic" }}>
+                                    {e.kategorie} – {e.autor}
+                                </p>
+
+                                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "1rem" }}>
+                                    <button onClick={() => handleBearbeiten(e)}>📝 Bearbeiten</button>
+                                    <button onClick={() => handleVeroeffentlichen(e)}>✅ Veröffentlichen</button>
+                                    <button onClick={() => handleLoeschen(e)}>🗑️ Löschen</button>
                                 </div>
                             </div>
                         </div>
@@ -135,3 +98,31 @@ export default function Entwuerfe({
         </div>
     );
 }
+
+
+// Styles
+const cardStyle = {
+    width: "260px",
+    backgroundColor: "#fff",
+    borderRadius: "12px",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+    overflow: "hidden"
+};
+
+const headerStyle = {
+    padding: "8px 12px",
+    backgroundColor: "#f5f5f5",
+    borderBottom: "1px solid #ddd"
+};
+
+const imageStyle = {
+    width: "100%",
+    height: "160px",
+    objectFit: "cover"
+};
+
+const contentStyle = {
+    padding: "12px"
+};
+
+export default Entwuerfe;

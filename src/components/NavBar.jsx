@@ -51,10 +51,12 @@ function NavBar({ user, handleLogout }) {
 
 const styles = {
     navbar: {
-        width: '100%',
+        width: '1240px',
         background: 'linear-gradient(90deg, #ff8360 0%, #ffefd5 100%)',
         borderBottom: '1px solid rgba(0,0,0,0.1)',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        borderBottomLeftRadius: '10px',
+        borderBottomRightRadius: '10px'
     },
     container: {
         maxWidth: '1200px',
