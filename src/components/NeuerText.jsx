@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-function NeuerText({ onSave, existingPost }) {
+function NeuerText({ onSave, onPublish }) {
     const [ueberschrift, setUeberschrift] = useState('');
     const [kurzbeschreibung, setKurzbeschreibung] = useState('');
     const [text, setText] = useState('');
@@ -11,6 +12,44 @@ function NeuerText({ onSave, existingPost }) {
     const [daumenRunter, setDaumenRunter] = useState(0);
     const [autor, setAutor] = useState('');
     const [kommentare, setKommentare] = useState([]);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const existingPost = location.state?.existingPost || null;
+
+// ✅ Hier kommt Punkt 3 rein
+    const buildPostObject = () => ({
+        id: existingPost?.id || Date.now(),
+        ueberschrift,
+        kurzbeschreibung,
+        text,
+        kategorie,
+        bild,
+        datum,
+        daumenHoch,
+        daumenRunter,
+        autor,
+        kommentare,
+    });
+
+// ✅ Hier kommt Punkt 4 rein
+    const handleSave = () => {
+        const newPost = buildPostObject();
+        onSave(newPost);
+        navigate("/entwuerfe");
+    };
+
+    const handlePublish = () => {
+        const newPost = buildPostObject();
+        onPublish(newPost);
+        navigate("/home");
+    };
+
+    const handleCancel = () => {
+        navigate("/entwuerfe");
+    };
+
+
+
 
     const handleImageChange = (e) => {
         const file = e.target.files[0]; // Das erste ausgewählte Bild
@@ -147,15 +186,19 @@ function NeuerText({ onSave, existingPost }) {
                 </select>
 
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem' }}>
-                    <button type="submit">
-                        {existingPost ? 'Änderungen speichern' : 'Post speichern'}
-                    </button>
-                    {existingPost && (
-                        <button type="button">
-                            Abbrechen
-                        </button>
+                    {!existingPost ? (
+                        <>
+                            <button type="button" onClick={handleSave}>💾 Als Entwurf speichern</button>
+                            <button type="button" onClick={handlePublish}>🚀 Veröffentlichen</button>
+                        </>
+                    ) : (
+                        <>
+                            <button type="button" onClick={handlePublish}>✅ Änderungen speichern</button>
+                            <button type="button" onClick={handleCancel}>❌ Abbrechen</button>
+                        </>
                     )}
                 </div>
+
             </form>
         </div>
     );
