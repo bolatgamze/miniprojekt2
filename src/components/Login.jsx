@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {Link, useNavigate} from "react-router-dom";
 
-function Login({ benutzern, setCurrentUser, currentUser }) {
+function Login({ benutzern, setBenutzern, setCurrentUser, currentUser }) {
     const [email, setEmail] = useState('');
     const [passwort, setPasswort] = useState('');
     const [error, setError] = useState('');
@@ -27,6 +27,17 @@ function Login({ benutzern, setCurrentUser, currentUser }) {
 
         // Erfolgreiches Login
         setCurrentUser(benutzer);
+
+        // Aktualisiere den "zuletzt online"-Wert auf das aktuelle Datum und Uhrzeit
+        const aktuellerBenutzer = { ...benutzer, zuletztOnline: new Date().toISOString() };
+
+        // Aktualisiere den benutzern-Zustand mit dem neuen "zuletztOnline"-Wert
+        const aktualisierteBenutzerListe = benutzern.map((user) =>
+            user.email === email ? aktuellerBenutzer : user
+        );
+
+        setBenutzern(aktualisierteBenutzerListe);
+
         setError('');
         navigate(`/home`);
 

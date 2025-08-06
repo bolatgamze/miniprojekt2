@@ -21,7 +21,7 @@ function NavBar({ user, handleLogout }) {
                     {role === 'admin' && (
                         <>
                             <Link to="/admin" className="navLink">Admin Panel</Link>
-                            <Link to="/neuerText" className="navLink">Neuer Text</Link>
+                            <Link to="/neuerText" className="navLink" >Neuer Post</Link>
                             <Link to="/entwuerfe" className="navLink">Entwürfe</Link>
                         </>
                     )}
