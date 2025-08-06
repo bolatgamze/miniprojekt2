@@ -1,12 +1,11 @@
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 
 function TextDetail({ texts, setTexts, benutzern, setBenutzern, currentUser, setCurrentUser }) {
     const { id } = useParams();
     const navigate = useNavigate();
-    const text = texts.find((t) => t.id === parseInt(id));
+    const text = texts.find((t) => t.id === parseInt(id, 10));
 
-    const [neuerAutor, setNeuerAutor] = useState("");
     const [neuerKommentar, setNeuerKommentar] = useState("");
 
     if (!text) return <div>Text nicht gefunden.</div>;
@@ -18,78 +17,69 @@ function TextDetail({ texts, setTexts, benutzern, setBenutzern, currentUser, set
     });
 
     const handleKommentarAbsenden = () => {
-        if (neuerAutor.trim() === "" || neuerKommentar.trim() === "") return;
+        if (!currentUser || !["admin", "user"].includes(currentUser.status)) return;
+        if (neuerKommentar.trim() === "") return;
+
         const neuerEintrag = {
             id: text.kommentare.length + 1,
-            autor: neuerAutor,
+            autor: currentUser.benutzername,
             inhalt: neuerKommentar
         };
-        const updatedTexts = texts.map(t =>
+        // In Texte einfügen
+        setTexts(texts.map(t =>
             t.id === text.id
                 ? { ...t, kommentare: [...t.kommentare, neuerEintrag] }
                 : t
-        );
-        setTexts(updatedTexts);
+        ));
+        // In currentUser und benutzern speichern
         const neuerUserKommentar = { textId: text.id, inhalt: neuerKommentar };
         const updatedCurrent = {
             ...currentUser,
             textKommentare: [...(currentUser.textKommentare || []), neuerUserKommentar]
         };
-          setCurrentUser(updatedCurrent);
-          setBenutzern(prev =>
-              prev.map(u =>
-                  u.benutzername === updatedCurrent.benutzername
-                      ? { ...u, textKommentare: updatedCurrent.textKommentare }
-                      : u
-              )
-          );
-        setNeuerAutor("");
+        setCurrentUser(updatedCurrent);
+        setBenutzern(benutzern.map(u =>
+            u.benutzername === updatedCurrent.benutzername
+                ? { ...u, textKommentare: updatedCurrent.textKommentare }
+                : u
+        ));
         setNeuerKommentar("");
     };
 
     const handleKommentarLoeschen = (kommentarId) => {
-        const updatedTexts = texts.map(t => {
-            if (t.id === text.id) {
-                return {
-                    ...t,
-                    kommentare: t.kommentare.filter(k => k.id !== kommentarId)
-                };
-            }
-            return t;
-        });
-        setTexts(updatedTexts);
+        setTexts(texts.map(t => {
+            if (t.id !== text.id) return t;
+            return {
+                ...t,
+                kommentare: t.kommentare.filter(k => k.id !== kommentarId)
+            };
+        }));
     };
 
     const handleDaumen = (typ) => {
-        const updatedTexts = texts.map(t => {
-            if (t.id === text.id) {
-                return {
-                    ...t,
-                    daumenHoch: typ === "hoch" ? t.daumenHoch + 1 : t.daumenHoch,
-                    daumenRunter: typ === "runter" ? t.daumenRunter + 1 : t.daumenRunter
-                };
-            }
-            return t;
-        });
-        setTexts(updatedTexts);
+        setTexts(texts.map(t => {
+            if (t.id !== text.id) return t;
+            return {
+                ...t,
+                daumenHoch: typ === "hoch" ? t.daumenHoch + 1 : t.daumenHoch,
+                daumenRunter: typ === "runter" ? t.daumenRunter + 1 : t.daumenRunter
+            };
+        }));
     };
 
     const handleTextLoeschen = () => {
-        setTexts(prev => prev.filter(t => t.id !== text.id));
-        setBenutzern(prev =>
-                    prev.map(u =>
-                        u.benutzername === text.autor && Array.isArray(u.texte)
-                            ? { ...u, texte: u.texte.filter(tid => tid !== text.id) }
-                            : u
-                    )
-                );
+        setTexts(texts.filter(t => t.id !== text.id));
+        setBenutzern(benutzern.map(u =>
+            u.benutzername === text.autor && Array.isArray(u.texte)
+                ? { ...u, texte: u.texte.filter(tid => tid !== text.id) }
+                : u
+        ));
         if (currentUser?.texte) {
             setCurrentUser({
                 ...currentUser,
                 texte: currentUser.texte.filter(tid => tid !== text.id)
             });
         }
-
         navigate("/home");
     };
 
@@ -128,20 +118,12 @@ function TextDetail({ texts, setTexts, benutzern, setBenutzern, currentUser, set
                     gap: "16px",
                     alignItems: "center"
                 }}>
-                    <span
-                        onClick={() => handleDaumen("hoch")}
-                        style={{ cursor: "pointer" }}
-                        title="Gefällt mir"
-                    >
-                        👍 <span style={{ fontWeight: "bold" }}>{text.daumenHoch}</span>
-                    </span>
-                    <span
-                        onClick={() => handleDaumen("runter")}
-                        style={{ cursor: "pointer" }}
-                        title="Gefällt mir nicht"
-                    >
-                        👎 <span style={{ fontWeight: "bold" }}>{text.daumenRunter}</span>
-                    </span>
+          <span onClick={() => handleDaumen("hoch")} style={{ cursor: "pointer" }} title="Gefällt mir">
+            👍 <strong>{text.daumenHoch}</strong>
+          </span>
+                    <span onClick={() => handleDaumen("runter")} style={{ cursor: "pointer" }} title="Gefällt mir nicht">
+            👎 <strong>{text.daumenRunter}</strong>
+          </span>
                 </div>
 
                 {currentUser?.status === "admin" && (
@@ -173,12 +155,10 @@ function TextDetail({ texts, setTexts, benutzern, setBenutzern, currentUser, set
                 borderRadius: "12px"
             }}>
                 <h3>Kommentare</h3>
-                {text.kommentare.length === 0 ? (
-                    <p>Noch keine Kommentare.</p>
-                ) : (
-                    text.kommentare.map(k => {
+                {text.kommentare.length === 0
+                    ? <p>Noch keine Kommentare.</p>
+                    : text.kommentare.map(k => {
                         const user = benutzern.find(u => u.benutzername === k.autor) || {};
-
                         return (
                             <div key={k.id} style={{
                                 position: "relative",
@@ -187,22 +167,18 @@ function TextDetail({ texts, setTexts, benutzern, setBenutzern, currentUser, set
                                 gap: "12px",
                                 marginBottom: "12px",
                                 padding: "12px",
-                                backgroundColor: "#ffffff",
+                                backgroundColor: "#fff",
                                 borderRadius: "8px",
                                 boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
                             }}>
                                 <img
                                     src={user.profilbild}
                                     alt={k.autor}
-                                    style={{
-                                        width: "50px",
-                                        height: "50px",
-                                        borderRadius: "50%"
-                                    }}
+                                    style={{ width: "50px", height: "50px", borderRadius: "50%" }}
                                 />
-                                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", flex: 1 }}>
+                                <div style={{ flex: 1 }}>
                                     <strong>{k.autor}</strong>
-                                    <p style={{ margin: "4px 0 0 0" }}>{k.inhalt}</p>
+                                    <p style={{ margin: "4px 0 0" }}>{k.inhalt}</p>
                                 </div>
                                 {currentUser?.status === "admin" && (
                                     <button
@@ -226,66 +202,51 @@ function TextDetail({ texts, setTexts, benutzern, setBenutzern, currentUser, set
                             </div>
                         );
                     })
-                )}
+                }
             </div>
 
-            {/* Kommentar-Formular */}
-            <div style={{
-                marginTop: "30px",
-                padding: "20px",
-                backgroundColor: "rgba(255, 255, 255, 0.85)",
-                borderRadius: "12px",
-                boxShadow: "0 0 10px rgba(0,0,0,0.05)",
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px"
-            }}>
-                <h3>Kommentar schreiben</h3>
-                <input
-                    type="text"
-                    placeholder="Dein Nickname"
-                    value={neuerAutor}
-                    onChange={(e) => setNeuerAutor(e.target.value)}
-                    style={{
-                        width: "100%",
-                        padding: "5px",
-                        border: "1px solid #ccc",
-                        borderRadius: "8px",
-                        backgroundColor: "#fff",
-                        color: "black"
-                    }}
-                />
-                <textarea
-                    placeholder="Schreib einen Kommentar..."
-                    value={neuerKommentar}
-                    onChange={(e) => setNeuerKommentar(e.target.value)}
-                    rows="4"
-                    style={{
-                        width: "100%",
-                        padding: "5px",
-                        border: "1px solid #ccc",
-                        borderRadius: "8px",
-                        backgroundColor: "#fff",
-                        color: "black"
-                    }}
-                />
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <button
-                        onClick={handleKommentarAbsenden}
+            {/* Kommentar-Formular nur für angemeldete User */}
+            {currentUser && ["admin", "user"].includes(currentUser.status) && (
+                <div style={{
+                    marginTop: "30px",
+                    padding: "20px",
+                    backgroundColor: "rgba(255,255,255,0.85)",
+                    borderRadius: "12px",
+                    boxShadow: "0 0 10px rgba(0,0,0,0.05)"
+                }}>
+                    <h3>Kommentar schreiben</h3>
+                    <textarea
+                        placeholder="Schreib einen Kommentar..."
+                        value={neuerKommentar}
+                        onChange={(e) => setNeuerKommentar(e.target.value)}
+                        rows="4"
                         style={{
-                            padding: "8px 16px",
+                            width: "100%",
+                            padding: "5px",
+                            border: "1px solid #ccc",
                             borderRadius: "8px",
-                            backgroundColor: "#f4a261",
-                            border: "none",
-                            color: "#fff",
-                            cursor: "pointer",
-                            fontSize: "14px"
+                            backgroundColor: "#fff",
+                            color: "#000"
                         }}
-                    >
-                        Absenden
-                    </button>
+                    />
+                    <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
+                        <button
+                            onClick={handleKommentarAbsenden}
+                            style={{
+                                padding: "8px 16px",
+                                borderRadius: "8px",
+                                backgroundColor: "#f4a261",
+                                border: "none",
+                                color: "#fff",
+                                cursor: "pointer",
+                                fontSize: "14px"
+                            }}
+                        >
+                            Absenden
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }
