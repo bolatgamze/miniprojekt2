@@ -74,7 +74,7 @@ function MerkListe({ merkliste, setMerkliste, currentUser, texts }) {
     };
     return (
         <div style={{ padding: "2rem" }}>
-            <h2 style={{ marginBottom: "1.5rem" }}>⭐ Gemerkte Texte</h2>
+            <h2 style={{ marginBottom: "1.5rem" }}>Gemerkte Texte</h2>
 
             {bookmarkedTexts.length === 0 ? (
                 <p>Du hast noch keine Texte gemerkt.</p>
