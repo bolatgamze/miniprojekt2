@@ -1,51 +1,50 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function Register({ benutzern, setBenutzern }) {
+function Register({ benutzern, setBenutzern, setCurrentUser }) {
     const [benutzername, setBenutzername] = useState('');
     const [email, setEmail] = useState('');
     const [passwort, setPasswort] = useState('');
     const [profilbild, setProfilbild] = useState('');
     const [typ, setTyp] = useState('Katze');
-    const [beigetretenAm, setBeigetretenAm] = useState(new Date().toISOString().split("T")[0]);
+    const [beigetretenAm] = useState(new Date().toISOString().split("T")[0]);
     const [error, setError] = useState('');
 
-    const handleImageChange = (e) => {
+    const navigate = useNavigate();
+
+    const handleImageChange = e => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setProfilbild(reader.result); // Bild wird als Base64-String gesetzt
-            };
-            reader.readAsDataURL(file); // Startet das Einlesen der Datei
+            reader.onloadend = () => setProfilbild(reader.result);
+            reader.readAsDataURL(file);
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = e => {
         e.preventDefault();
 
-        // Validierung
+        // --- Validierung ---
         if (!benutzername || !email || !passwort) {
             setError("Alle Felder sind erforderlich!");
             return;
         }
-
-        // Prüfen, ob der Benutzername oder die E-Mail bereits existiert
-        if (benutzern.some((user) => user.email === email || user.benutzername === benutzername)) {
+        if (benutzern.some(u => u.email === email || u.benutzername === benutzername)) {
             setError("Benutzername oder E-Mail existieren bereits!");
             return;
         }
 
-        const defaultImg =
-            typ === "Katze"
-                ? "/profilbilder/defaultkatze.PNG"
-                : "/profilbilder/defaulthund.PNG";
+        // --- Neuer Benutzer ---
+        const defaultImg = typ === "Katze"
+            ? "/profilbilder/defaultkatze.PNG"
+            : "/profilbilder/defaulthund.PNG";
 
-        // Erstellen des neuen Benutzers
         const neuerBenutzer = {
             benutzername,
-            status: 'user', // Der Status eines neuen Benutzers ist standardmäßig "user"
+            status: 'user',
             email,
-            passwort, // Passwörter sollten normalerweise sicher gespeichert werden
+            // HIER: password statt passwort, damit Login funktioniert:
+            password: passwort,
             profilbild: profilbild || defaultImg,
             typ,
             beigetretenAm,
@@ -56,29 +55,23 @@ function Register({ benutzern, setBenutzern }) {
             merkliste: []
         };
 
-        // Neuen Benutzer zum Zustand hinzufügen
-        setBenutzern([...benutzern, neuerBenutzer]);
-
-        // Felder zurücksetzen
-        setBenutzername('');
-        setEmail('');
-        setPasswort('');
-        setProfilbild('');
-        setError('');
+        // --- Zustand updaten und automatisch einloggen ---
+        setBenutzern(prev => [...prev, neuerBenutzer]);
+        setCurrentUser(neuerBenutzer);
+        navigate("/home");
     };
 
     return (
-        <div style={{ padding: "40px 20px 30px", maxWidth: "800px", margin: "0 auto" }}>
+        <div style={{ padding: "40px 20px", maxWidth: "800px", margin: "0 auto" }}>
             <h2>Registriere dich als neuer Benutzer</h2>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-
                 {error && <div style={{ color: 'red' }}>{error}</div>}
 
                 <input
                     type="text"
                     placeholder="Benutzername"
                     value={benutzername}
-                    onChange={(e) => setBenutzername(e.target.value)}
+                    onChange={e => setBenutzername(e.target.value)}
                     required
                     style={{ padding: '0.5rem', fontSize: '1rem' }}
                 />
@@ -87,7 +80,7 @@ function Register({ benutzern, setBenutzern }) {
                     type="email"
                     placeholder="E-Mail"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={e => setEmail(e.target.value)}
                     required
                     style={{ padding: '0.5rem', fontSize: '1rem' }}
                 />
@@ -96,30 +89,28 @@ function Register({ benutzern, setBenutzern }) {
                     type="password"
                     placeholder="Passwort"
                     value={passwort}
-                    onChange={(e) => setPasswort(e.target.value)}
+                    onChange={e => setPasswort(e.target.value)}
                     required
                     style={{ padding: '0.5rem', fontSize: '1rem' }}
                 />
 
                 {profilbild && (
-                    <div>
-                        <img src={profilbild} alt="Vorschau" style={{ maxWidth: '200px', marginTop: '1rem' }} />
-                    </div>
+                    <img src={profilbild} alt="Vorschau" style={{ maxWidth: '200px', margin: '1rem 0' }} />
                 )}
 
-                <div>
-                    <span>Profilbild hochladen:</span>
+                <label>
+                    Profilbild hochladen:
                     <input
                         type="file"
                         accept="image/*"
                         onChange={handleImageChange}
-                        style={{ padding: '0.5rem', fontSize: '1rem' }}
+                        style={{ display: 'block', marginTop: '0.5rem' }}
                     />
-                </div>
+                </label>
 
                 <select
                     value={typ}
-                    onChange={(e) => setTyp(e.target.value)}
+                    onChange={e => setTyp(e.target.value)}
                     style={{ padding: '0.5rem', fontSize: '1rem' }}
                 >
                     <option value="Katze">Katze</option>

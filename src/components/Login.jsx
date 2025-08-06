@@ -84,8 +84,16 @@ function Login({ benutzern, setBenutzern, setCurrentUser, currentUser }) {
                     </button>
                     <div style={{ marginTop: '1rem' }}>
                         <span>Noch nicht registriert? </span>
-                        <Link to="/register" style={{ color: 'blue', textDecoration: 'underline' }}>Jetzt registrieren</Link>
-                    </div>
+                        <Link
+                            to="/register"
+                            style={{
+                                color: 'coral',
+                                textDecoration: 'underline',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            Jetzt registrieren
+                        </Link>                    </div>
                 </form>
             )}
         </div>
