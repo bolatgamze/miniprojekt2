@@ -348,7 +348,7 @@ Und auch heute noch… wenn ich etwas Orangenes sehe, kann ich nicht anders: Ich
 Mit schnurrender Nostalgie,  
 Euer Simba`,
         kategorie: "Reflexion",
-        bild: "/images/image7.jpeg",
+        bild: "/images/7.jpg",
         datum: "2024-08-11",
         daumenHoch: 31,
         daumenRunter: 2,
@@ -710,9 +710,9 @@ Und wenn er fertig ist, feiern wir – mit einem Snack. Für ihn. Und für mich.
 Dein Coding-Buddy  
 Simba 🐱`,
         kategorie: "Alltag",
-        bild: "/images/photo_2025-08-05_08-36-00.jpg", // bitte Bild entsprechend umbenennen/speichern
+        bild: "/images/17.jpg",
         datum: "2025-08-06",
-        daumenHoch: 58,
+        daumenHoch: 59,
         daumenRunter: 1,
         autor: "Simba",
         kommentare: [
