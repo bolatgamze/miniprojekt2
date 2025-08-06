@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 function Login({ benutzern, setCurrentUser, currentUser }) {
     const [email, setEmail] = useState('');
     const [passwort, setPasswort] = useState('');
     const [error, setError] = useState('');
 
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -27,6 +28,7 @@ function Login({ benutzern, setCurrentUser, currentUser }) {
         // Erfolgreiches Login
         setCurrentUser(benutzer);
         setError('');
+        navigate(`/home`);
 
 
         // Beispiel: Weiterleitung zur Home-Seite oder zum Benutzerprofil

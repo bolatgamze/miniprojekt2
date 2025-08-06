@@ -10,12 +10,7 @@ import { Link } from 'react-router-dom';
 function NavBar({ user, handleLogout }) {
     const role = user?.status || 'guest';
     const avatarUrl = user?.profilbild || '';
-    const navigate = useNavigate();
 
-    const onLogout = () => {
-        handleLogout();       // currentUser = null
-        navigate('/login');   // login sayfasına yönlendir
-    };
 
     return (
         <nav style={styles.navbar}>

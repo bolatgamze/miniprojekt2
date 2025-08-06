@@ -23,7 +23,7 @@ function Home({ texts, setTexts, benutzern, setBenutzern, currentUser, merkliste
     const istGemerkterText = (id) => {
         const sessionIDs = Array.isArray(merkliste) ? merkliste : [];
 
-        const profileIDs = Array.isArray(currentUser.merkliste) ? currentUser.merkliste : [];
+        const profileIDs = Array.isArray(currentUser?.merkliste) ? currentUser.merkliste : [];
 
         return sessionIDs.includes(id) || profileIDs.includes(id);
 
