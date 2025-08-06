@@ -73,7 +73,7 @@ function MerkListe({ merkliste, setMerkliste, currentUser, texts }) {
         );
     };
     return (
-        <div style={{ padding: "2rem" }}>
+        <div style={{ padding: "2rem", minHeight:'790px' }}>
             <h2 style={{ marginBottom: "1.5rem" }}>⭐ Gemerkte Texte</h2>
 
             {bookmarkedTexts.length === 0 ? (

@@ -30,7 +30,7 @@ function Entwuerfe({ entwuerfe, setEntwuerfe, texts, setTexts, currentUser }) {
     };
 
     return (
-        <div style={{ padding: "2rem" }}>
+        <div style={{ padding: "2rem", minHeight:'790px' }}>
             <h2>📄 Meine Entwürfe</h2>
 
             {allDrafts.length === 0 ? (

@@ -49,6 +49,7 @@ function About() {
     const containerStyle = {
         padding: '20px',
         fontFamily: 'Arial, sans-serif',
+        width: '1200px'
     };
     const titleStyle = {
         textAlign: 'center',

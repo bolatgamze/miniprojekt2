@@ -109,7 +109,7 @@ function NeuerText({ onSave, onPublish }) {
     };
 
     return (
-        <div style={{ padding: "40px 20px 30px", maxWidth: "800px", margin: "0 auto" }}>
+        <div style={{ padding: "40px 20px 30px", maxWidth: "800px", minHeight:'800px', margin: "0 220px" }}>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
 
                 <input

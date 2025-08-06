@@ -23,7 +23,7 @@ function AdminPanel({ benutzern, setBenutzern }) {
 
     // Styles
     const styles = {
-        container: { padding: '2rem', fontFamily: 'sans-serif' },
+        container: { padding: '20px', fontFamily: 'sans-serif',width: '1200px' },
         sectionTitle: { margin: '2rem 0 1rem', fontSize: '1.5rem', fontWeight: 'bold', color: '#333' },
         adminGrid: { display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '1.5rem' },
         userGrid: { display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1.5rem' },
