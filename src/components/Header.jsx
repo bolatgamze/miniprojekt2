@@ -33,7 +33,8 @@ const styles = {
         padding: '8px 16px',
         background: 'linear-gradient(90deg, #ff8360 0%, #ffefd5 100%)',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        borderTopLeftRadius: '10px', borderTopRightRadius: '10px'
+        borderTopLeftRadius: '10px', borderTopRightRadius: '10px',
+        maxWidth: '1208px'
     },
     container: {
         maxWidth: '1200px',

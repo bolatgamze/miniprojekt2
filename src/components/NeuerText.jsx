@@ -73,7 +73,8 @@ function NeuerText({ currentUser, onSave, onPublish }) {
         borderRadius: "12px",
         boxShadow: "0 0 10px rgba(0,0,0,0.05)",
         maxWidth: "800px",
-        margin: "40px auto"
+        margin: "40px auto",
+        minHeight: '740px'
     };
     const fieldStyle = {
         width: "100%",

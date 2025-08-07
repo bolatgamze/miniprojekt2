@@ -30,7 +30,7 @@ function Entwuerfe({ entwuerfe, setEntwuerfe, texts, setTexts, currentUser }) {
     };
 
     return (
-        <div style={{ padding: '2.5rem', fontFamily: 'sans-serif' }}>
+        <div style={{ padding: '2.5rem', fontFamily: 'sans-serif', minHeight:'790px' }}>
             <style>{`
         .draft-grid { display:flex; flex-wrap:wrap; gap:24px; justify-content:center; }
         .draft-card {
